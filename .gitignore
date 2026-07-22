@@ -32,3 +32,6 @@ pnpm-debug.log*
 Thumbs.db
 Desktop.ini
 
+# Copyrighted game artwork fetched locally for the non-commercial fan guide.
+# Keep the source manifest and fetch script in git, not the binary redistribution.
+assets/game/

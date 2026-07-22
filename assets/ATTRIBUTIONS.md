@@ -20,6 +20,12 @@ The following files were selected from the official Hades media pack published o
 
 Hades and all related official artwork are copyright Supergiant Games. The downloaded media pack did not include a separate license file; these assets are used sparingly for identification, commentary, and illustration within this fan guide. Do not assume they are freely licensed for unrelated reuse or commercial distribution.
 
+## Wiki-indexed game assets
+
+Character profiles, Infernal Arms, god symbols and portraits, Boon icons, Keepsake icons, and item icons are resolved from their Hades Wiki file pages through the MediaWiki API. The exact source filename and local path for every selected file are recorded in [`source-manifest.json`](source-manifest.json); category links, setup details, and rights notes are in [`ASSET_SOURCES.md`](ASSET_SOURCES.md).
+
+These files remain Hades game artwork owned by Supergiant Games or its licensors. The generated `game/` directory is excluded from Git and is not licensed under the repository's MIT license.
+
 ## Original project icons
 
 `icons/skull-laurel.svg`, `icons/greek-helm.svg`, and `icons/cycle-flame.svg` are original geometric SVG symbols created for this guide. They do not reproduce extracted in-game icons.

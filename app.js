@@ -31,6 +31,119 @@ const FEATURE_ICONS = [
   'assets/icons/cycle-flame.svg',
 ];
 
+const GAME_ASSET_ROOT = 'assets/game';
+const CHARACTER_IMAGES = {
+  Zagreus: 'characters/zagreus.png',
+  Nyx: 'characters/nyx.png',
+  Hypnos: 'characters/hypnos.png',
+  Achilles: 'characters/achilles.png',
+  Hades: 'characters/hades.png',
+  Cerberus: 'characters/cerberus.png',
+  Skelly: 'characters/skelly.png',
+  Dusa: 'characters/dusa.png',
+  Orpheus: 'characters/orpheus.png',
+  Charon: 'characters/charon.png',
+  Megaera: 'characters/megaera.png',
+  Thanatos: 'characters/thanatos.png',
+};
+const WEAPON_IMAGES = {
+  stygius: 'weapons/stygius.png',
+  varatha: 'weapons/varatha.png',
+  aegis: 'weapons/aegis.png',
+  coronacht: 'weapons/coronacht.png',
+  malphon: 'weapons/malphon.png',
+  exagryph: 'weapons/exagryph.png',
+};
+const GOD_IMAGES = Object.fromEntries([
+  'zeus', 'poseidon', 'athena', 'aphrodite', 'ares',
+  'artemis', 'dionysus', 'demeter', 'hermes', 'chaos',
+].map((id) => [id, {
+  portrait: `gods/portraits/${id}.png`,
+  symbol: `gods/symbols/${id}.png`,
+}]));
+const ITEM_IMAGES = {
+  Darkness: 'items/darkness.png',
+  'Chthonic Keys': 'items/chthonic-key.png',
+  Gemstones: 'items/gemstone.png',
+  Nectar: 'items/nectar.png',
+  Ambrosia: 'items/ambrosia.png',
+  'Titan Blood': 'items/titan-blood.png',
+  Diamonds: 'items/diamond.png',
+  Obols: 'items/charons-obol.png',
+};
+const RUN_REWARD_ASSETS = [
+  { name: 'Daedalus Hammer', desc: 'เปลี่ยนท่าอาวุธ', image: 'items/daedalus-hammer.png' },
+  { name: 'Centaur Heart', desc: 'เพิ่ม HP สูงสุด', image: 'items/centaur-heart.png' },
+  { name: 'Pom of Power', desc: 'เพิ่มเลเวล Boon', image: 'items/pom-of-power.png' },
+  { name: 'Heat', desc: 'ตัวปรับความยากหลังจบเกม', image: 'items/heat.png' },
+];
+const KEEPSAKE_IMAGES = {
+  'Old Spiked Collar': 'keepsakes/old-spiked-collar.png',
+  'Lucky Tooth': 'keepsakes/lucky-tooth.png',
+  'Myrmidon Bracer': 'keepsakes/myrmidon-bracer.png',
+  'Pierced Butterfly': 'keepsakes/pierced-butterfly.png',
+  'Distant Memory': 'keepsakes/distant-memory.png',
+  'Bone Hourglass': 'keepsakes/bone-hourglass.png',
+  'Chthonic Coin Purse': 'keepsakes/chthonic-coin-purse.png',
+  'Lambent Plume': 'keepsakes/lambent-plume.png',
+};
+const GOD_KEEPSAKE_IMAGES = [
+  'thunder-signet', 'conch-shell', 'owl-pendant', 'eternal-rose',
+  'blood-filled-vial', 'adamant-arrowhead', 'overflowing-cup', 'frostbitten-horn',
+].map((name) => `keepsakes/${name}.png`);
+const BOON_STARTERS = {
+  zeus: [
+    ['Lightning Strike', 'Attack', 'lightning-strike'], ['Thunder Flourish', 'Special', 'thunder-flourish'],
+    ['Electric Shot', 'Cast', 'electric-shot'], ['Thunder Dash', 'Dash', 'thunder-dash'], ['Zeus\' Aid', 'Call', 'zeus-aid'],
+  ],
+  poseidon: [
+    ['Tempest Strike', 'Attack', 'tempest-strike'], ['Tempest Flourish', 'Special', 'tempest-flourish'],
+    ['Flood Shot', 'Cast', 'flood-shot'], ['Tidal Dash', 'Dash', 'tidal-dash'], ['Poseidon\'s Aid', 'Call', 'poseidon-aid'],
+  ],
+  athena: [
+    ['Divine Strike', 'Attack', 'divine-strike'], ['Divine Flourish', 'Special', 'divine-flourish'],
+    ['Phalanx Shot', 'Cast', 'phalanx-shot'], ['Divine Dash', 'Dash', 'divine-dash'], ['Athena\'s Aid', 'Call', 'athena-aid'],
+  ],
+  aphrodite: [
+    ['Heartbreak Strike', 'Attack', 'heartbreak-strike'], ['Heartbreak Flourish', 'Special', 'heartbreak-flourish'],
+    ['Crush Shot', 'Cast', 'crush-shot'], ['Passion Dash', 'Dash', 'passion-dash'], ['Aphrodite\'s Aid', 'Call', 'aphrodite-aid'],
+  ],
+  ares: [
+    ['Curse of Agony', 'Attack', 'curse-of-agony'], ['Curse of Pain', 'Special', 'curse-of-pain'],
+    ['Slicing Shot', 'Cast', 'slicing-shot'], ['Blade Dash', 'Dash', 'blade-dash'], ['Ares\' Aid', 'Call', 'ares-aid'],
+  ],
+  artemis: [
+    ['Deadly Strike', 'Attack', 'deadly-strike'], ['Deadly Flourish', 'Special', 'deadly-flourish'],
+    ['True Shot', 'Cast', 'true-shot'], ['Hunter Dash', 'Dash', 'hunter-dash'], ['Artemis\' Aid', 'Call', 'artemis-aid'],
+  ],
+  dionysus: [
+    ['Drunken Strike', 'Attack', 'drunken-strike'], ['Drunken Flourish', 'Special', 'drunken-flourish'],
+    ['Trippy Shot', 'Cast', 'trippy-shot'], ['Drunken Dash', 'Dash', 'drunken-dash'], ['Dionysus\' Aid', 'Call', 'dionysus-aid'],
+  ],
+  demeter: [
+    ['Frost Strike', 'Attack', 'frost-strike'], ['Frost Flourish', 'Special', 'frost-flourish'],
+    ['Crystal Beam', 'Cast', 'crystal-beam'], ['Mistral Dash', 'Dash', 'mistral-dash'], ['Demeter\'s Aid', 'Call', 'demeter-aid'],
+  ],
+  hermes: [
+    ['Swift Strike', 'Attack', 'swift-strike'], ['Swift Flourish', 'Special', 'swift-flourish'],
+    ['Greater Haste', 'Move', 'greater-haste'], ['Greatest Reflex', 'Dash', 'greatest-reflex'], ['Side Hustle', 'Obols', 'side-hustle'],
+  ],
+  chaos: [
+    ['Strike', 'Attack', 'chaos-strike'], ['Flourish', 'Special', 'chaos-flourish'],
+    ['Shot', 'Cast', 'chaos-shot'], ['Lunge', 'Dash Attack', 'chaos-lunge'], ['Soul', 'Max HP', 'chaos-soul'],
+  ],
+};
+const LEGENDARY_IMAGES = {
+  'Splitting Bolt': 'boons/splitting-bolt.png',
+  'Vicious Cycle': 'boons/vicious-cycle.png',
+  'Divine Protection': 'boons/divine-protection.png',
+  'Unhealthy Fixation': 'boons/unhealthy-fixation.png',
+};
+
+function gameAsset(relativePath, alt, className = '') {
+  return `<img src="${GAME_ASSET_ROOT}/${relativePath}" alt="${alt}" class="${className}" loading="lazy" decoding="async" onload="if(this.previousElementSibling?.classList.contains('asset-fallback'))this.previousElementSibling.hidden=true" onerror="this.hidden=true">`;
+}
+
 function mediaFigure(src, alt, caption, className = '') {
   return `<figure class="media-frame ${className}">
     <img src="${src}" alt="${alt}" loading="lazy" decoding="async">
@@ -99,11 +212,23 @@ function renderCore() {
 
   const currencies = CURRENCIES.map((c) => `
     <div class="card currency">
-      <span class="currency__icon" style="background:${c.bg};color:${c.color}">${icon(CURRENCY_ICON, 18, { width: 1.8 })}</span>
+      <span class="currency__icon" style="background:${c.bg};color:${c.color}">
+        <span class="asset-fallback" aria-hidden="true">${c.name[0]}</span>
+        ${gameAsset(ITEM_IMAGES[c.name], `ไอคอน ${c.name}`, 'currency__img')}
+      </span>
       <div>
         <div class="currency__name">${c.name}</div>
         <div class="currency__use">${c.use}</div>
       </div>
+    </div>`).join('');
+
+  const runRewards = RUN_REWARD_ASSETS.map((item) => `
+    <div class="reward-item">
+      <span class="reward-item__icon">
+        <span class="asset-fallback" aria-hidden="true">${item.name[0]}</span>
+        ${gameAsset(item.image, `ไอคอน ${item.name}`, 'reward-item__img')}
+      </span>
+      <span><b>${item.name}</b><small>${item.desc}</small></span>
     </div>`).join('');
 
   return `<div class="screen" data-screen-label="ระบบหลัก">
@@ -122,6 +247,8 @@ function renderCore() {
 
     <div class="subhead">ค่าเงินและทรัพยากร (Currencies)</div>
     <div class="grid auto-240" style="margin-bottom:30px">${currencies}</div>
+    <div class="field-label">สัญลักษณ์สำคัญอื่น ๆ ที่จะเจอระหว่างเล่น</div>
+    <div class="reward-strip">${runRewards}</div>
     <p class="tip-text"><b>เคล็ดลับ:</b> ก่อนเข้าประตูจะเห็นสัญลักษณ์รางวัลของห้องถัดไปเสมอ (boon เทพองค์ไหน, เลือด, Pom, เงิน, ค้อน ฯลฯ) — วางแผนได้ว่าจะเดินไปทางไหนตามสิ่งที่ต้องการ</p>
   </div>`;
 }
@@ -151,9 +278,15 @@ function renderMindset() {
 function renderChars() {
   const people = HOUSE_CHARS.map((h) => `
     <div class="card person">
-      <div class="person__name">${h.name}</div>
-      <div class="person__latin">${h.latin}</div>
-      <div class="person__role">${h.role}</div>
+      <div class="person__portrait">
+        <span class="asset-fallback" aria-hidden="true">${h.name[0]}</span>
+        ${gameAsset(CHARACTER_IMAGES[h.name], `ภาพโปรไฟล์ ${h.name}`, 'person__img')}
+      </div>
+      <div class="person__copy">
+        <div class="person__name">${h.name}</div>
+        <div class="person__latin">${h.latin}</div>
+        <div class="person__role">${h.role}</div>
+      </div>
     </div>`).join('');
 
   return `<div class="screen" data-screen-label="ตัวละคร">
@@ -162,7 +295,10 @@ function renderChars() {
     <p class="lead">คนในบ้านของ Hades คือหัวใจของเนื้อเรื่อง กลับบ้านทุกครั้งลองคุยกับทุกคน — เนื้อเรื่องเดิน และมักได้ของขวัญ</p>
 
     <div class="hero-card">
-      <div class="hero-card__avatar"><img src="assets/official/hero-zagreus.jpg" alt="Zagreus" loading="lazy" decoding="async"></div>
+      <div class="hero-card__avatar">
+        <span class="asset-fallback" aria-hidden="true">Z</span>
+        ${gameAsset(CHARACTER_IMAGES.Zagreus, 'ภาพโปรไฟล์ Zagreus', 'hero-card__avatar-img')}
+      </div>
       <div>
         <div class="hero-card__kicker">THE PROTAGONIST</div>
         <div class="hero-card__name">Zagreus</div>
@@ -171,7 +307,7 @@ function renderChars() {
     </div>
 
     <div class="subhead">คนในบ้าน (House of Hades)</div>
-    <div class="grid auto-230" style="margin-bottom:22px">${people}</div>
+    <div class="grid auto-280" style="margin-bottom:22px">${people}</div>
     ${mediaFigure('assets/official/hades.jpg', 'Hades เจ้าแห่งยมโลกบนบัลลังก์', 'Hades · เจ้าแห่งยมโลกและพ่อของ Zagreus', 'media-frame--character')}
 
     <div class="grid cols-2 gap-14">
@@ -182,6 +318,16 @@ function renderChars() {
       </div>
       <div class="card--ember pair-box pair-box--ember">
         <div class="info-title info-title--ember">สายสัมพันธ์ &amp; เพื่อนร่วมรบ</div>
+        <div class="companion-portraits" aria-label="ตัวอย่างเพื่อนร่วมรบ">
+          <span class="companion-portrait">
+            ${gameAsset(CHARACTER_IMAGES.Megaera, 'ภาพโปรไฟล์ Megaera', 'companion-portrait__img')}
+            <small>Megaera</small>
+          </span>
+          <span class="companion-portrait">
+            ${gameAsset(CHARACTER_IMAGES.Thanatos, 'ภาพโปรไฟล์ Thanatos', 'companion-portrait__img')}
+            <small>Thanatos</small>
+          </span>
+        </div>
         <p>มอบ <b class="c-gold">Nectar</b> และ <b class="c-pink">Ambrosia</b> ให้ NPC เพื่อสานสัมพันธ์ บางตัว (Thanatos, Megaera, Dusa ฯลฯ) จะกลายเป็นเพื่อนที่เรียกมาช่วยรบได้ในรัน</p>
       </div>
     </div>
@@ -191,7 +337,10 @@ function renderChars() {
 function renderWeapons() {
   const chips = WEAPONS.map((w) => `
     <button class="wchip${w.id === state.weapon ? ' is-active' : ''}" data-weapon="${w.id}">
-      ${icon(w.iconPath, 26, { width: 1.6 })}
+      <span class="wchip__art">
+        <span class="asset-fallback" aria-hidden="true">${icon(w.iconPath, 26, { width: 1.6 })}</span>
+        ${gameAsset(WEAPON_IMAGES[w.id], `ภาพอาวุธ ${w.short}`, 'wchip__img')}
+      </span>
       <span class="wchip__short">${w.short}</span>
       <span class="wchip__type">${w.type}</span>
     </button>`).join('');
@@ -230,7 +379,10 @@ function renderWeapons() {
 
     <div class="card card--edge wpanel" style="margin-bottom:22px">
       <div class="wpanel__head">
-        <div class="wpanel__badge">${icon(w.iconPath, 34, { stroke: '#160b05', width: 1.7 })}</div>
+        <div class="wpanel__badge">
+          <span class="asset-fallback" aria-hidden="true">${icon(w.iconPath, 34, { stroke: '#160b05', width: 1.7 })}</span>
+          ${gameAsset(WEAPON_IMAGES[w.id], `ภาพอาวุธ ${w.short}`, 'wpanel__img')}
+        </div>
         <div style="flex:1;min-width:220px">
           <h2 class="wpanel__title">${w.short}</h2>
           ${state.showLatin ? `<div class="wpanel__latin">${w.latin}</div>` : ''}
@@ -267,13 +419,26 @@ function renderWeapons() {
 }
 
 function renderBoons() {
+  const g = GODS.find((x) => x.id === state.god) || GODS[0];
+  const selectedGodImages = GOD_IMAGES[g.id];
   const gChips = GODS.map((g) => `
     <button class="gchip${g.id === state.god ? ' is-active' : ''}" data-god="${g.id}" style="--accent:${g.color}">
-      <span class="gchip__dot"></span>${g.name}
+      <span class="gchip__symbol">
+        <span class="gchip__dot asset-fallback"></span>
+        ${gameAsset(GOD_IMAGES[g.id].symbol, `สัญลักษณ์ ${g.name}`, 'gchip__img')}
+      </span>
+      <span>${g.name}</span>
     </button>`).join('');
 
-  const g = GODS.find((x) => x.id === state.god) || GODS[0];
   const signature = g.signature.map((s) => `<li><span class="sig-dot"></span><span>${s}</span></li>`).join('');
+  const boonExamples = (BOON_STARTERS[g.id] || []).map(([name, slot, file]) => `
+    <div class="boon-token">
+      <span class="boon-token__icon">
+        <span class="asset-fallback" aria-hidden="true">${name[0]}</span>
+        ${gameAsset(`boons/${file}.png`, `ไอคอน Boon ${name}`, 'boon-token__img')}
+      </span>
+      <span class="boon-token__copy"><small>${slot}</small><b>${name}</b></span>
+    </div>`).join('');
 
   const statuses = STATUSES.map((st) => `
     <div class="card card--edge status-card" style="--accent:${st.color}">
@@ -294,12 +459,18 @@ function renderBoons() {
 
   const legendary = LEGENDARY.map((lg) => `
     <div class="legendary">
-      <div class="legendary__head">
-        <span class="legendary__name">${lg.name}</span>
-        <span class="legendary__god">${lg.god}</span>
+      <div class="legendary__icon">
+        <span class="asset-fallback" aria-hidden="true">${lg.name[0]}</span>
+        ${gameAsset(LEGENDARY_IMAGES[lg.name], `ไอคอน ${lg.name}`, 'legendary__img')}
       </div>
-      <div class="legendary__effect">${lg.effect}</div>
-      <div class="legendary__req"><b>เงื่อนไข:&nbsp;</b>${lg.req}</div>
+      <div class="legendary__copy">
+        <div class="legendary__head">
+          <span class="legendary__name">${lg.name}</span>
+          <span class="legendary__god">${lg.god}</span>
+        </div>
+        <div class="legendary__effect">${lg.effect}</div>
+        <div class="legendary__req"><b>เงื่อนไข:&nbsp;</b>${lg.req}</div>
+      </div>
     </div>`).join('');
 
   const kinds = BOON_KINDS.map((k) => `
@@ -313,11 +484,6 @@ function renderBoons() {
     <h1 class="section-title">Boon เทพโอลิมปัส</h1>
     <p class="lead" style="margin-bottom:24px">ระหว่างหนี เทพจะเสนอ Boon (พร) ให้เลือก แต่ละองค์มีสถานะ/แนวทางเฉพาะตัว หัวใจของการสร้างบิลด์คือ "เลือกทางแล้วโฟกัส" อย่าเก็บกระจายทุกองค์ กดเลือกเทพเพื่อดูจุดเด่น</p>
 
-    <div class="boon-showcase">
-      ${mediaFigure('assets/official/zeus.jpg', 'Zeus เทพแห่งสายฟ้า', 'Zeus · สายฟ้าและความเสียหายแบบลูกโซ่', 'media-frame--god')}
-      ${mediaFigure('assets/official/athena.jpg', 'Athena เทพีแห่งปัญญา', 'Athena · การป้องกันและ Deflect', 'media-frame--god')}
-    </div>
-
     <div class="legend-row">
       <div class="legend-chip">ระดับ: <span class="c-ink" style="color:#ddd3c7">Common</span> &#8594; Rare &#8594; Epic &#8594; <span class="c-gold">Heroic</span></div>
       <div class="legend-chip"><span class="c-ember">Duo Boon</span> = รวมพลัง 2 เทพ</div>
@@ -328,17 +494,30 @@ function renderBoons() {
     <div class="grid auto-120 gap-9" style="margin-bottom:26px">${gChips}</div>
 
     <div class="card card--edge gpanel" style="--accent:${g.color};margin-bottom:26px">
-      <div class="gpanel__head">
-        <h2 class="gpanel__name">${g.name}</h2>
-        ${state.showLatin ? `<span class="gpanel__latin">${g.latin}</span>` : ''}
+      <div class="gpanel__layout">
+        <div class="gpanel__portrait">
+          <span class="asset-fallback" aria-hidden="true">${g.name[0]}</span>
+          ${gameAsset(selectedGodImages.portrait, `ภาพ ${g.name}`, 'gpanel__portrait-img')}
+        </div>
+        <div class="gpanel__content">
+          <div class="gpanel__head">
+            <span class="gpanel__symbol">
+              ${gameAsset(selectedGodImages.symbol, `สัญลักษณ์ ${g.name}`, 'gpanel__symbol-img')}
+            </span>
+            <h2 class="gpanel__name">${g.name}</h2>
+            ${state.showLatin ? `<span class="gpanel__latin">${g.latin}</span>` : ''}
+          </div>
+          <div class="tag-row">
+            <span class="tag tag--type">สาย: ${g.domain}</span>
+            <span class="tag tag--status" style="background:${g.statusBg};color:${g.color}">${g.status}</span>
+          </div>
+          <div class="field-label">จุดเด่น</div>
+          <ul class="sig-list">${signature}</ul>
+          <div class="card--panel synergy-box"><b>การจับคู่ &amp; ทิป: </b><span>${g.synergy}</span></div>
+        </div>
       </div>
-      <div class="tag-row">
-        <span class="tag tag--type">สาย: ${g.domain}</span>
-        <span class="tag tag--status" style="background:${g.statusBg};color:${g.color}">${g.status}</span>
-      </div>
-      <div class="field-label">จุดเด่น</div>
-      <ul class="sig-list">${signature}</ul>
-      <div class="card--panel synergy-box"><b>การจับคู่ &amp; ทิป: </b><span>${g.synergy}</span></div>
+      <div class="gpanel__boons-title">ตัวอย่างพรหลักของ ${g.name}</div>
+      <div class="boon-token-grid">${boonExamples}</div>
     </div>
 
     <div class="subhead subhead--tight">สถานะ (Status) ของแต่ละเทพ ทำงานยังไง</div>
@@ -432,12 +611,24 @@ function renderUpgrades() {
 }
 
 function renderKeepsakes() {
-  const items = KEEPSAKES.map((k) => `
-    <div class="card keepsake">
-      <div class="keepsake__name">${k.name}</div>
-      <div class="keepsake__from">จาก ${k.from}</div>
-      <div class="keepsake__effect">${k.effect}</div>
-    </div>`).join('');
+  const items = KEEPSAKES.map((k) => {
+    const isGodSet = k.name === 'God Keepsakes (all gods)';
+    const art = isGodSet
+      ? `<div class="keepsake__god-row">${GOD_KEEPSAKE_IMAGES.map((image, index) => gameAsset(image, `Keepsake เทพชิ้นที่ ${index + 1}`, 'keepsake__god-img')).join('')}</div>`
+      : `<div class="keepsake__icon">
+          <span class="asset-fallback" aria-hidden="true">${k.name[0]}</span>
+          ${gameAsset(KEEPSAKE_IMAGES[k.name], `ไอคอน ${k.name}`, 'keepsake__img')}
+        </div>`;
+    return `
+      <div class="card keepsake${isGodSet ? ' keepsake--gods' : ''}">
+        ${art}
+        <div class="keepsake__copy">
+          <div class="keepsake__name">${k.name}</div>
+          <div class="keepsake__from">จาก ${k.from}</div>
+          <div class="keepsake__effect">${k.effect}</div>
+        </div>
+      </div>`;
+  }).join('');
 
   return `<div class="screen" data-screen-label="Keepsakes">
     <div class="eyebrow">KEEPSAKES</div>

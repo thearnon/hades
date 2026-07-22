@@ -58,3 +58,35 @@ Post-fix evidence is recorded in the full-view and focused comparison images abo
 - Interaction tested: overview → Boon page → Athena selected; active navigation and panel heading updated correctly.
 
 final result: passed
+
+## Asset integration pass — 2026-07-22
+
+- Reference and final overview were reviewed together in this pass: the accepted hero composition, Thai copy, sidebar width, feature rail, and discovery image remain unchanged.
+- Current evidence: `D:\tmp\hades-assets-overview-final.png`, `D:\tmp\hades-assets-characters-final.png`, `D:\tmp\hades-assets-weapons-final.png`, `D:\tmp\hades-assets-boons-athena-final.png`, `D:\tmp\hades-assets-keepsakes-final.png`, and `D:\tmp\hades-assets-mobile-boons-final.png`.
+- Viewports: 1440 × 1100 desktop and 390 × 844 mobile at device scale factor 1.
+
+### Comparison ledger
+
+1. Overview/reference composition — unchanged; no image-source label was reintroduced over the hero artwork.
+2. Character cards — square profile artwork now sits in a consistent 72 × 82 px frame; names and roles retain their original hierarchy and no card overflows.
+3. Weapon controls — all six Infernal Arms use contained artwork in equal-height selectors, and the selected weapon repeats at a larger, bounded scale in the detail panel.
+4. God/Boon surface — the previously static Zeus/Athena banner pair was replaced by one contextual selected-god panel, with a portrait, symbol, and five matching Boon icons; this aligns image and text state after each click.
+5. Keepsake surface — eight named keepsakes have one icon each, while the Olympian aggregate card uses an eight-icon grid rather than a misleading single object.
+6. Responsive behavior — the selected-god panel stacks portrait before copy at 390 px; horizontal overflow remains zero.
+
+### Iteration findings
+
+- [P1 fixed] The first pass used a generic image `onload` handler that hid the previous sibling. In the Olympian keepsake row this hid seven valid icons. The handler now hides only a sibling explicitly marked `.asset-fallback`; the rerun shows all 8/8 god keepsakes.
+- [P2 fixed] Fallback initials and SVGs remained visible behind transparent PNG artwork because an author `display` rule overrode the HTML `hidden` state. An explicit `.asset-fallback[hidden]` rule now prevents double imagery and layout expansion.
+
+### Final asset QA
+
+- Browser plugin: unavailable.
+- Playwright: not installed; `npx --no-install playwright --version` could not resolve a local runtime and attempted a restricted npm cache access, so no dependency was installed.
+- Fallback: installed Chrome headless controlled through the DevTools protocol against `http://127.0.0.1:4173/`.
+- Page identity, non-blank content, and framework-overlay checks: passed.
+- Local image failures across Core, Characters, Weapons, Boons, and Keepsakes: 0.
+- Runtime exceptions, console errors/warnings, and failed network responses: 0.
+- Interaction proof: Coronacht selection updated both active chip and detail image; Athena and Chaos selection each updated the portrait, heading, and five-icon Boon set.
+- Counts verified: 8 currencies, 4 other reward icons, 9 character cards, 6 weapon selectors, 10 god selectors, 5 Boon examples per selected god, 8 core keepsakes, and 8 Olympian keepsake icons.
+- Final result: passed.

@@ -231,10 +231,10 @@ const DUOS = [
 ];
 
 const LEGENDARY = [
-  { god: 'Zeus', name: 'Splitting Bolt', effect: 'ฟ้าผ่าแยกเป็นหลายสายพร้อมกัน ดาเมจ AoE พุ่งสูงมาก', req: 'ต้องมี boon สายฟ้าหลายชิ้นก่อน' },
-  { god: 'Ares', name: 'Vicious Cycle', effect: 'ยิ่งปัก/ระเบิด Doom สะสม ดาเมจ Doom ยิ่งเพิ่มขึ้นทั้งรัน', req: 'ต้องมี boon Ares หลายชิ้น' },
+  { god: 'Zeus', name: 'Splitting Bolt', effect: 'เอฟเฟกต์สายฟ้าทุกครั้งจะปล่อยประกายเพิ่มอีกชุด ช่วยเสริมดาเมจและเคลียร์ฝูง', req: 'ต้องมี Storm Lightning, Double Strike หรือ High Voltage อย่างน้อย 1 ชิ้น' },
+  { god: 'Ares', name: 'Vicious Cycle', effect: 'Blade Rift แรงขึ้นทุกครั้งที่โดนศัตรูต่อเนื่อง เหมาะกับบิลด์ใบมีดหมุน', req: 'ต้องมี Black Metal หรือ Engulfing Vortex' },
   { god: 'Athena', name: 'Divine Protection', effect: 'ได้เกราะกันดาเมจ 1 ครั้งที่ชาร์จคืนได้เรื่อย ๆ อึดขึ้นมหาศาล', req: 'ต้องมี boon Athena หลายชิ้น' },
-  { god: 'Aphrodite', name: 'Low Tolerance', effect: 'ศัตรูที่ติด Weak จะรับดาเมจเพิ่มขึ้นอีก คูณความแรงทั้งบิลด์', req: 'ต้องมี boon Aphrodite หลายชิ้น' },
+  { god: 'Aphrodite', name: 'Unhealthy Fixation', effect: 'เอฟเฟกต์ Weak มีโอกาส 15% ทำให้ศัตรูติด Charm และหันไปโจมตีพวกเดียวกัน', req: 'ต้องมีพรแกนหลัก Aphrodite 1 ชิ้น และพรเสริม Weak อีก 1 ชิ้น' },
 ];
 
 const BOON_KINDS = [
@@ -277,10 +277,10 @@ const KEEPSAKES = [
   { name: 'Old Spiked Collar', from: 'Cerberus', effect: '+HP สูงสุดตอนเริ่มรัน อึดขึ้นทันที เหมาะมือใหม่' },
   { name: 'Lucky Tooth', from: 'Skelly', effect: 'ฟื้นคืนชีพฟรี 1 ครั้งต่อรัน กันพลาด' },
   { name: 'Myrmidon Bracer', from: 'Achilles', effect: 'ลดดาเมจจากด้านหน้าอย่างมากช่วงต้น (เหมือนเกราะกันหน้า)' },
-  { name: 'Pierced Butterfly', from: 'Thanatos', effect: 'ดาเมจเพิ่มขึ้นเรื่อย ๆ ถ้าไม่โดนตี (รีเซ็ตเมื่อโดน)' },
-  { name: 'Distant Memory', from: 'Eurydice', effect: 'ดาเมจเพิ่มกับศัตรูที่อยู่ไกล เหมาะสายธนู/ปืน' },
-  { name: 'Bone Hourglass', from: 'Charon', effect: 'ของในร้าน Charon ถูกลงช่วงต้นของรัน' },
-  { name: 'Chthonic Coin Purse', from: 'Charon', effect: 'เริ่มรันพร้อมทอง (Obols) ติดตัว ซื้อของได้เร็ว' },
+  { name: 'Pierced Butterfly', from: 'Thanatos', effect: 'สะสมดาเมจเพิ่มเมื่อเคลียร์ห้องโดยไม่โดนตี ยิ่งทำต่อเนื่องยิ่งแรง' },
+  { name: 'Distant Memory', from: 'Orpheus', effect: 'ดาเมจเพิ่มกับศัตรูที่อยู่ไกล เหมาะสายธนู/ปืน' },
+  { name: 'Bone Hourglass', from: 'Charon', effect: 'ไอเทมที่ซื้อจาก Well of Charon มีระยะเวลาเพิ่มขึ้นหลายห้อง' },
+  { name: 'Chthonic Coin Purse', from: 'Hypnos', effect: 'เริ่มรันพร้อมทอง (Obols) ติดตัว ซื้อของได้เร็ว' },
   { name: 'Lambent Plume', from: 'Hermes', effect: 'สะสม dodge/ความเร็วเมื่อเคลียร์ห้องไว เหมาะสายว่องไว' },
   { name: 'God Keepsakes (all gods)', from: 'Olympian Gods', effect: 'การันตีให้เทพองค์นั้นเสนอ boon ก่อน + เรริตี้สูงขึ้น = บังคับบิลด์ได้' },
 ];
