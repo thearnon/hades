@@ -1,0 +1,13 @@
+# Normalize text files and keep line endings consistent across platforms.
+* text=auto eol=lf
+
+# Treat common web assets as binary.
+*.gif binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+

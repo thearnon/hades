@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HADES — ไกด์ระบบเกม &amp; เคล็ดลับการเล่น</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-title">HADES</div>
+        <div class="brand-sub">ไกด์ระบบเกม &amp; เคล็ดลับการเล่น</div>
+        <div class="brand-rule"></div>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="sidebar-footer">
+        อ้างอิงเนื้อหาเกม <span style="color:#8a8296">Hades</span> โดย Supergiant Games (2020) · ไกด์สรุปสำหรับผู้เล่นไทย
+      </div>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="topbar-accent"></div>
+      <div class="content" id="content"></div>
+    </main>
+  </div>
+
+  <!-- Data first, then the app that consumes it -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
