@@ -61,6 +61,20 @@ const GOD_IMAGES = Object.fromEntries([
   portrait: `gods/portraits/${id}.png`,
   symbol: `gods/symbols/${id}.png`,
 }]));
+// Portrait canvases vary from very wide (Poseidon) to very tall (Chaos).
+// These focal-point values keep each god at a deliberate, dialogue-scale crop.
+const GOD_PORTRAIT_LAYOUT = {
+  zeus:      { scale: 1.32, x: '-3%', y: '3%', mobileScale: 1.20, mobileX: '-3%', mobileY: '3%' },
+  poseidon:  { scale: 1.78, x: '0%',  y: '2%', mobileScale: 1.45, mobileX: '0%',  mobileY: '2%' },
+  athena:    { scale: 1.10, x: '4%',  y: '3%', mobileScale: 0.98, mobileX: '4%',  mobileY: '4%' },
+  aphrodite: { scale: 1.05, x: '0%',  y: '6%', mobileScale: 0.98, mobileX: '0%',  mobileY: '5%' },
+  ares:      { scale: 1.18, x: '2%',  y: '2%', mobileScale: 1.06, mobileX: '2%',  mobileY: '2%' },
+  artemis:   { scale: 1.12, x: '-4%', y: '2%', mobileScale: 1.02, mobileX: '-3%', mobileY: '3%' },
+  dionysus:  { scale: 1.04, x: '4%',  y: '4%', mobileScale: 0.98, mobileX: '4%',  mobileY: '4%' },
+  demeter:   { scale: 1.02, x: '0%',  y: '7%', mobileScale: 0.96, mobileX: '0%',  mobileY: '6%' },
+  hermes:    { scale: 1.33, x: '-2%', y: '2%', mobileScale: 1.15, mobileX: '-2%', mobileY: '2%' },
+  chaos:     { scale: 1.12, x: '2%',  y: '7%', mobileScale: 0.96, mobileX: '2%',  mobileY: '6%' },
+};
 const ITEM_IMAGES = {
   Darkness: 'items/darkness.png',
   'Chthonic Keys': 'items/chthonic-key.png',
@@ -421,8 +435,19 @@ function renderWeapons() {
 function renderBoons() {
   const g = GODS.find((x) => x.id === state.god) || GODS[0];
   const selectedGodImages = GOD_IMAGES[g.id];
+  const portraitLayout = GOD_PORTRAIT_LAYOUT[g.id] || GOD_PORTRAIT_LAYOUT.zeus;
+  const portraitStyle = [
+    `--accent:${g.color}`,
+    `--god-backdrop:${g.statusBg}`,
+    `--portrait-scale:${portraitLayout.scale}`,
+    `--portrait-x:${portraitLayout.x}`,
+    `--portrait-y:${portraitLayout.y}`,
+    `--portrait-mobile-scale:${portraitLayout.mobileScale}`,
+    `--portrait-mobile-x:${portraitLayout.mobileX}`,
+    `--portrait-mobile-y:${portraitLayout.mobileY}`,
+  ].join(';');
   const gChips = GODS.map((g) => `
-    <button class="gchip${g.id === state.god ? ' is-active' : ''}" data-god="${g.id}" style="--accent:${g.color}">
+    <button type="button" class="gchip${g.id === state.god ? ' is-active' : ''}" data-god="${g.id}" aria-pressed="${g.id === state.god}" style="--accent:${g.color}">
       <span class="gchip__symbol">
         <span class="gchip__dot asset-fallback"></span>
         ${gameAsset(GOD_IMAGES[g.id].symbol, `สัญลักษณ์ ${g.name}`, 'gchip__img')}
@@ -491,33 +516,36 @@ function renderBoons() {
       <div class="legend-chip"><span class="c-teal">Pom of Power</span> = อัพเลเวล boon ที่มี</div>
     </div>
 
-    <div class="grid auto-120 gap-9" style="margin-bottom:26px">${gChips}</div>
+    <div class="god-workspace">
+      <div class="god-selector" aria-label="เลือกเทพเพื่อดูรายละเอียด">${gChips}</div>
 
-    <div class="card card--edge gpanel" style="--accent:${g.color};margin-bottom:26px">
-      <div class="gpanel__layout">
-        <div class="gpanel__portrait">
+      <section class="god-encounter god-encounter--${g.id}" data-selected-god="${g.id}" style="${portraitStyle}" aria-labelledby="god-name-${g.id}">
+        <div class="god-encounter__art">
           <span class="asset-fallback" aria-hidden="true">${g.name[0]}</span>
-          ${gameAsset(selectedGodImages.portrait, `ภาพ ${g.name}`, 'gpanel__portrait-img')}
+          ${gameAsset(selectedGodImages.portrait, `ภาพ ${g.name}`, 'god-encounter__portrait')}
         </div>
-        <div class="gpanel__content">
-          <div class="gpanel__head">
-            <span class="gpanel__symbol">
-              ${gameAsset(selectedGodImages.symbol, `สัญลักษณ์ ${g.name}`, 'gpanel__symbol-img')}
+        <div class="god-encounter__content">
+          <header class="god-encounter__head">
+            <span class="god-encounter__symbol">
+              ${gameAsset(selectedGodImages.symbol, `สัญลักษณ์ ${g.name}`, 'god-encounter__symbol-img')}
             </span>
-            <h2 class="gpanel__name">${g.name}</h2>
-            ${state.showLatin ? `<span class="gpanel__latin">${g.latin}</span>` : ''}
-          </div>
+            <h2 class="god-encounter__name" id="god-name-${g.id}">${g.name}</h2>
+            ${state.showLatin ? `<span class="god-encounter__latin">${g.latin}</span>` : ''}
+          </header>
           <div class="tag-row">
             <span class="tag tag--type">สาย: ${g.domain}</span>
             <span class="tag tag--status" style="background:${g.statusBg};color:${g.color}">${g.status}</span>
           </div>
           <div class="field-label">จุดเด่น</div>
           <ul class="sig-list">${signature}</ul>
-          <div class="card--panel synergy-box"><b>การจับคู่ &amp; ทิป: </b><span>${g.synergy}</span></div>
+          <div class="god-encounter__synergy"><b>การจับคู่ &amp; ทิป: </b><span>${g.synergy}</span></div>
         </div>
-      </div>
-      <div class="gpanel__boons-title">ตัวอย่างพรหลักของ ${g.name}</div>
-      <div class="boon-token-grid">${boonExamples}</div>
+      </section>
+
+      <section class="god-boon-shelf" style="--accent:${g.color}" aria-labelledby="god-boons-title-${g.id}">
+        <h3 class="god-boon-shelf__title" id="god-boons-title-${g.id}">ตัวอย่างพรหลักของ ${g.name}</h3>
+        <div class="boon-token-grid">${boonExamples}</div>
+      </section>
     </div>
 
     <div class="subhead subhead--tight">สถานะ (Status) ของแต่ละเทพ ทำงานยังไง</div>
