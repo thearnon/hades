@@ -10,7 +10,8 @@ export/
 ├── index.html    โครงหน้า (sidebar + main) โหลด CSS/JS
 ├── styles.css    สไตล์ทั้งหมด (แยกเป็น class จาก inline style เดิม)
 ├── data.js       ข้อมูลเกมทั้งหมด (อาวุธ, เทพ, บอส, keepsake ฯลฯ) — แก้เนื้อหาที่นี่
-└── app.js        ตรรกะ render + การกดสลับหน้า/อาวุธ/เทพ
+├── app.js        ตรรกะ render + การกดสลับหน้า/อาวุธ/เทพ
+└── assets/       ภาพจากชุดสื่อทางการ, ไอคอน SVG ต้นฉบับ และ ATTRIBUTIONS.md
 ```
 
 ## วิธีรัน
@@ -25,6 +26,10 @@ python3 -m http.server 8000   # แล้วเปิด http://localhost:8000/e
 ```
 
 > ฟอนต์ (Cinzel, Kanit, IBM Plex Sans Thai) โหลดจาก Google Fonts จึงต้องต่อเน็ตขณะเปิด
+
+## ภาพประกอบ
+
+ภาพเกมที่ใช้ในเว็บคัดจากชุดสื่อทางการของ Supergiant Games และเก็บรายการไฟล์ต้นทางไว้ใน `assets/ATTRIBUTIONS.md` ส่วนไอคอน SVG ใน `assets/icons/` เป็นงานต้นฉบับที่สร้างสำหรับเว็บนี้โดยเฉพาะ โปรเจกต์นี้เป็นไกด์แฟนเมดอย่างไม่เป็นทางการและไม่ได้รับการรับรองโดย Supergiant Games
 
 ## แก้อะไรตรงไหน
 

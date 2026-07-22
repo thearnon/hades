@@ -1,0 +1,60 @@
+# Design QA
+
+## Comparison target
+
+- Source visual truth: `D:\Users\arnon.k.ERAWANSUGAR\.codex\generated_images\019f88bf-b795-7750-95e6-57e95fac6516\exec-dc427719-6978-4b29-9040-ed9dc366f2a3.png`
+- Implementation screenshot: `D:\tmp\hades-layout-final.png`
+- Full-view comparison: `D:\tmp\hades-layout-comparison-final.png`
+- Focused hero comparison: `D:\tmp\hades-layout-hero-comparison-final.png`
+- Responsive evidence: `D:\tmp\hades-layout-mobile-final.png`
+- State: overview/default, with navigation and Boon selection checked separately
+- Viewport: 1504 × 1046 CSS px at device scale factor 1
+- Source pixels: 1504 × 1046
+- Implementation pixels: 1504 × 1046
+- Density normalization: none required; source and implementation use identical pixel dimensions
+
+## Full-view comparison evidence
+
+The implementation now follows the reference composition: a 282 px fixed sidebar; copy-left/art-right hero; a three-card feature rail beginning at y=466; compact quick links on the left; and the Tartarus image lifted beside the discovery heading. The implementation preserves the existing live navigation and guide content while matching the reference's main proportions.
+
+## Focused hero comparison evidence
+
+The focused comparison confirms that the HADES title scale, text column, hero-art focal point, fade into the page background, ornamental divider, and feature-card baseline align with the reference. The official Zagreus asset remains sharp and is not distorted. No source-credit label is rendered over the image.
+
+## Required fidelity surfaces
+
+- Fonts and typography: Cinzel remains the display face; Kanit and IBM Plex Sans Thai preserve the reference's display/body hierarchy. The desktop HADES title was increased to 86 px to match the reference scale. Mobile retains its existing clamp.
+- Spacing and layout rhythm: the feature rail is 1042 px wide with three equal 347 px tracks and no gaps, and starts at y=466. Quick-link cards were reduced to 50 px minimum height and the discovery image was lifted 38 px.
+- Colors and tokens: the existing plum, ember, gold, and teal tokens match the selected direction. Contrast remains readable.
+- Image quality and asset fidelity: the official raster artwork is used directly. The hero crop is scaled and positioned without stretching, then masked at the container edge to merge with the background.
+- Copy and content: existing Thai guide copy is preserved. Only image-source overlay labels were removed; attribution remains in the sidebar and attribution file.
+- Responsiveness: 390 × 844 renders without horizontal overflow, clipped controls, or broken images.
+- Interaction and accessibility: semantic buttons still drive navigation and god selection; image alt text remains present and reduced-motion handling is unchanged.
+
+## Comparison history
+
+### Iteration 1
+
+- [P2] Feature cards stretched to 1118 px and ended too close to the viewport edge, unlike the narrower reference rail.
+- [P2] Zagreus was too small and the image read as a separate rectangular block.
+- [P2] Quick-link cards were too tall and wrapped labels; the Tartarus image began about 38 px below the reference position.
+
+Fixes made: narrowed the feature rail to 1042 px, expanded and blended the hero-media area, adjusted the Zagreus focal position, compacted quick-link controls, and lifted the discovery image.
+
+### Final pass
+
+Post-fix evidence is recorded in the full-view and focused comparison images above. No actionable P0, P1, or P2 mismatch remains. A minor P3 difference remains in the exact ornamental/icon drawing detail because the implementation preserves the project's existing icon assets rather than rasterizing the generated concept.
+
+## Browser verification
+
+- Browser plugin: not available in this session.
+- Playwright project/runtime: not installed in the repository.
+- Fallback: installed Chrome headless controlled through the DevTools protocol.
+- Page identity and meaningful content: passed.
+- Broken images: 0.
+- Source labels on images: 0.
+- Console errors or warnings: 0.
+- Horizontal overflow at desktop/mobile: none.
+- Interaction tested: overview → Boon page → Athena selected; active navigation and panel heading updated correctly.
+
+final result: passed

@@ -25,6 +25,18 @@ function icon(path, size = 20, opts = {}) {
 }
 const flame = (size, stroke = '#ff8f4d') => icon(FLAME, size, { stroke, width: 1.8 });
 const MARK = '<span class="tip-list__mark">&#9670;</span>';
+const FEATURE_ICONS = [
+  'assets/icons/skull-laurel.svg',
+  'assets/icons/greek-helm.svg',
+  'assets/icons/cycle-flame.svg',
+];
+
+function mediaFigure(src, alt, caption, className = '') {
+  return `<figure class="media-frame ${className}">
+    <img src="${src}" alt="${alt}" loading="lazy" decoding="async">
+    <figcaption>${caption}</figcaption>
+  </figure>`;
+}
 
 /* ---- Sidebar nav ------------------------------------------------------ */
 function renderNav() {
@@ -43,10 +55,11 @@ function renderNav() {
    ========================================================================= */
 
 function renderOverview() {
-  const features = OVERVIEW_FEATURES.map((f) => `
+  const features = OVERVIEW_FEATURES.map((f, index) => `
     <div class="card feature-card">
-      <div class="feature-card__label" style="color:${f.color}">${f.label}</div>
-      <div class="feature-card__desc">${f.desc}</div>
+      <div class="feature-card__icon"><img src="${FEATURE_ICONS[index]}" alt="" aria-hidden="true"></div>
+      <div><div class="feature-card__label" style="color:${f.color}">${f.label}</div>
+      <div class="feature-card__desc">${f.desc}</div></div>
     </div>`).join('');
 
   const cards = SECTIONS.slice(1).map((s) => `
@@ -56,13 +69,23 @@ function renderOverview() {
     </button>`).join('');
 
   return `<div class="screen" data-screen-label="เริ่มต้นที่นี่">
+    <section class="overview-hero">
+      <div class="overview-hero__copy">
     <div class="eyebrow" style="margin-bottom:14px">ยินดีต้อนรับสู่ยมโลก</div>
     <h1 class="hero-title">HADES</h1>
     <p class="hero-tagline">โร้กไลก์หนีออกจากนรก ที่ยิ่งตายยิ่งแข็งแกร่ง</p>
     <p class="lead lead--66">คุณคือ <b>Zagreus</b> เจ้าชายแห่งยมโลก ที่พยายามหนีจากบ้านของพ่อ (Hades) ขึ้นไปสู่พื้นโลก แต่ละครั้งที่ตายคือการเริ่มใหม่ — พร้อมของอัพเกรด เนื้อเรื่อง และความเก่งที่มากขึ้น ไกด์นี้พาคุณรู้จักทุกระบบตั้งแต่ศูนย์</p>
-    <div class="grid auto-200 gap-14" style="margin-bottom:38px">${features}</div>
+      </div>
+      <figure class="overview-hero__media">
+        <img src="assets/official/hero-zagreus.jpg" alt="Zagreus เจ้าชายแห่งยมโลกพร้อมดาบ" fetchpriority="high" decoding="async">
+      </figure>
+    </section>
+    <div class="grid auto-200 overview-features">${features}</div>
     <div class="subhead subhead--sm">ไกด์นี้พาไปรู้จักอะไรบ้าง</div>
-    <div class="grid auto-230">${cards}</div>
+    <div class="overview-discovery">
+      <div class="grid auto-230 overview-links">${cards}</div>
+      ${mediaFigure('assets/official/tartarus.jpg', 'ภาพบรรยากาศเมืองใต้พิภพ Tartarus', 'Tartarus · จุดเริ่มต้นของทุกการหลบหนี', 'media-frame--overview')}
+    </div>
   </div>`;
 }
 
@@ -89,7 +112,8 @@ function renderCore() {
     <p class="lead">หัวใจของ Hades คือ "วงจรของการตายและกลับมาใหม่" เข้าใจ 3 อย่างนี้แล้วเล่นสนุกขึ้นทันที: วงจรรัน, ความหมายของการตาย, และค่าเงินต่าง ๆ</p>
 
     <div class="subhead">วงจรหนึ่งรัน (Run Loop)</div>
-    <div class="steps" style="margin-bottom:34px">${steps}</div>
+    <div class="steps" style="margin-bottom:22px">${steps}</div>
+    ${mediaFigure('assets/official/house-of-hades.jpg', 'ห้องโถงภายใน House of Hades', 'House of Hades · บ้านที่กลับมาทุกครั้งหลังจบรัน', 'media-frame--wide')}
 
     <div class="card card--warm callout" style="margin-bottom:34px">
       <div class="callout__head">${flame(20)}<span class="callout__title">ตาย = ความคืบหน้า</span></div>
@@ -138,7 +162,7 @@ function renderChars() {
     <p class="lead">คนในบ้านของ Hades คือหัวใจของเนื้อเรื่อง กลับบ้านทุกครั้งลองคุยกับทุกคน — เนื้อเรื่องเดิน และมักได้ของขวัญ</p>
 
     <div class="hero-card">
-      <div class="hero-card__avatar"><span>Z</span></div>
+      <div class="hero-card__avatar"><img src="assets/official/hero-zagreus.jpg" alt="Zagreus" loading="lazy" decoding="async"></div>
       <div>
         <div class="hero-card__kicker">THE PROTAGONIST</div>
         <div class="hero-card__name">Zagreus</div>
@@ -147,7 +171,8 @@ function renderChars() {
     </div>
 
     <div class="subhead">คนในบ้าน (House of Hades)</div>
-    <div class="grid auto-230" style="margin-bottom:30px">${people}</div>
+    <div class="grid auto-230" style="margin-bottom:22px">${people}</div>
+    ${mediaFigure('assets/official/hades.jpg', 'Hades เจ้าแห่งยมโลกบนบัลลังก์', 'Hades · เจ้าแห่งยมโลกและพ่อของ Zagreus', 'media-frame--character')}
 
     <div class="grid cols-2 gap-14">
       <div class="card--teal pair-box pair-box--teal">
@@ -200,6 +225,7 @@ function renderWeapons() {
     <h1 class="section-title">อาวุธทั้ง 6 แบบเจาะลึก</h1>
     <p class="lead" style="margin-bottom:26px">แต่ละอาวุธเปลี่ยนสไตล์การเล่นไปคนละแบบ ลองให้ครบทั้ง 6 (ชนะด้วยแต่ละอันจะได้ Darkness/Titan Blood โบนัส) แล้วค่อยหาอันที่ถูกใจ — กดเลือกด้านล่างเพื่อดูรายละเอียด</p>
 
+    ${mediaFigure('assets/official/weapon-combat.jpg', 'Zagreus ต่อสู้ด้วยอาวุธ Infernal Arms', 'Infernal Arms · อาวุธแต่ละชิ้นเปลี่ยนจังหวะการเล่น', 'media-frame--wide')}
     <div class="grid auto-150 gap-10" style="margin-bottom:28px">${chips}</div>
 
     <div class="card card--edge wpanel" style="margin-bottom:22px">
@@ -287,6 +313,11 @@ function renderBoons() {
     <h1 class="section-title">Boon เทพโอลิมปัส</h1>
     <p class="lead" style="margin-bottom:24px">ระหว่างหนี เทพจะเสนอ Boon (พร) ให้เลือก แต่ละองค์มีสถานะ/แนวทางเฉพาะตัว หัวใจของการสร้างบิลด์คือ "เลือกทางแล้วโฟกัส" อย่าเก็บกระจายทุกองค์ กดเลือกเทพเพื่อดูจุดเด่น</p>
 
+    <div class="boon-showcase">
+      ${mediaFigure('assets/official/zeus.jpg', 'Zeus เทพแห่งสายฟ้า', 'Zeus · สายฟ้าและความเสียหายแบบลูกโซ่', 'media-frame--god')}
+      ${mediaFigure('assets/official/athena.jpg', 'Athena เทพีแห่งปัญญา', 'Athena · การป้องกันและ Deflect', 'media-frame--god')}
+    </div>
+
     <div class="legend-row">
       <div class="legend-chip">ระดับ: <span class="c-ink" style="color:#ddd3c7">Common</span> &#8594; Rare &#8594; Epic &#8594; <span class="c-gold">Heroic</span></div>
       <div class="legend-chip"><span class="c-ember">Duo Boon</span> = รวมพลัง 2 เทพ</div>
@@ -359,6 +390,11 @@ function renderBiomes() {
     <h1 class="section-title">4 ด่าน &amp; บอสประจำโซน</h1>
     <p class="lead">เส้นทางหนีผ่าน 4 ภูมิภาค แต่ละที่มีบรรยากาศ ศัตรู และบอสของตัวเอง เอาชนะบอสสุดท้ายเพื่อ "หนีสำเร็จ" — แล้วเกมจะวนใหม่พร้อมเนื้อเรื่องต่อ</p>
 
+    <div class="region-gallery">
+      ${mediaFigure('assets/official/tartarus.jpg', 'ภาพรวม Tartarus', 'Tartarus', 'media-frame--region')}
+      ${mediaFigure('assets/official/asphodel-combat.jpg', 'การต่อสู้ท่ามกลางลาวาใน Asphodel', 'Asphodel', 'media-frame--region')}
+      ${mediaFigure('assets/official/elysium-combat.jpg', 'การต่อสู้กับ Theseus และ Asterius ใน Elysium', 'Elysium', 'media-frame--region')}
+    </div>
     <div class="stack gap-16">${biomes}</div>
 
     <div class="subhead" style="margin:30px 0 14px">จุดพิเศษที่เจอระหว่างทาง</div>
