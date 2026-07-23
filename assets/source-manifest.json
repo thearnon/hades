@@ -17,7 +17,16 @@
       { "source": "FP Orpheus.png", "path": "characters/orpheus.png", "label": "Orpheus" },
       { "source": "FP Charon.png", "path": "characters/charon.png", "label": "Charon" },
       { "source": "FP Megaera.png", "path": "characters/megaera.png", "label": "Megaera" },
-      { "source": "FP Thanatos.png", "path": "characters/thanatos.png", "label": "Thanatos" }
+      { "source": "FP Thanatos.png", "path": "characters/thanatos.png", "label": "Thanatos" },
+      { "source": "FP Persephone.png", "path": "characters/persephone.png", "label": "Persephone" },
+      { "source": "FP Alecto.png", "path": "characters/alecto.png", "label": "Alecto" },
+      { "source": "FP Tisiphone.png", "path": "characters/tisiphone.png", "label": "Tisiphone" },
+      { "source": "FP Patroclus.png", "path": "characters/patroclus.png", "label": "Patroclus" },
+      { "source": "FP Eurydice.png", "path": "characters/eurydice.png", "label": "Eurydice" },
+      { "source": "FP Sisyphus.png", "path": "characters/sisyphus.png", "label": "Sisyphus" },
+      { "source": "FP Bouldy.png", "path": "characters/bouldy.png", "label": "Bouldy" },
+      { "source": "FP Theseus.png", "path": "characters/theseus.png", "label": "Theseus" },
+      { "source": "FP Asterius.png", "path": "characters/asterius.png", "label": "Asterius" }
     ],
     "godPortraits": [
       { "source": "Zeus.png", "path": "gods/portraits/zeus.png", "label": "Zeus portrait" },

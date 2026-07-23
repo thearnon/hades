@@ -90,3 +90,30 @@ final result: passed
 - Interaction proof: Coronacht selection updated both active chip and detail image; Athena and Chaos selection each updated the portrait, heading, and five-icon Boon set.
 - Counts verified: 8 currencies, 4 other reward icons, 9 character cards, 6 weapon selectors, 10 god selectors, 5 Boon examples per selected god, 8 core keepsakes, and 8 Olympian keepsake icons.
 - Final result: passed.
+
+## Character archive and relationship map — 2026-07-23
+
+- Character concept: `D:\Users\arnon.k.ERAWANSUGAR\.codex\generated_images\019f8cd4-e38f-7460-8b37-046dc1731bc2\exec-7581f4ee-98d1-452d-8d90-6b298d060916.png`
+- Relationship concept: `D:\Users\arnon.k.ERAWANSUGAR\.codex\generated_images\019f8cd4-e38f-7460-8b37-046dc1731bc2\exec-b2fded9f-3d95-4d43-b67c-b18ffdd82044.png`
+- Desktop renders: `D:\tmp\hades-characters-final.png` and `D:\tmp\hades-relations-final.png`
+- Mobile renders: `D:\tmp\hades-characters-mobile-final.png` and `D:\tmp\hades-relations-mobile-final.png`
+- Native comparison viewport: 1504 × 1046 CSS px at device scale factor 1, matching both concept images exactly.
+
+### Fidelity ledger
+
+1. Information architecture — preserved the project’s existing sidebar and added one explicit relationship-map destination immediately after Characters.
+2. Character archive — matches the concept’s heading/filter/detail rhythm, while expanding the concept’s representative set to all 33 named characters and service NPCs requested.
+3. Dossier anatomy — keeps portrait, identity, faction/role, relationship, encounter location, unlock/gift information, and an open/closed state; Zagreus is open by default.
+4. Relationship canvas — matches the grouped mythic-map treatment with a selected central node, six line types, mode controls, and a direct-relationship inspector; the full 33-node canvas scrolls horizontally inside the established narrower content shell.
+5. Palette and typography — reuses the locked plum-black, ember, gold, teal, violet, Cinzel, Kanit, and IBM Plex Sans Thai system without changing the accepted overview design.
+6. Responsive behavior — at 390 × 844 the canvas becomes four grouped node lists plus the same selected-character inspector; no document-level horizontal overflow remains.
+
+### Functional verification
+
+- Browser plugin: unavailable; fallback used installed Chrome headless through the DevTools protocol.
+- Character archive: 33 cards, 6 filters, 9 Olympian results, all-detail expansion, and 0 broken images.
+- Relationship map: 33 nodes, 57 relationship edges, 5 romance edges, 15 kinship-mode edges, and node-to-inspector selection verified for Nyx and Persephone.
+- Runtime: 0 JavaScript exceptions, 0 console errors, 0 failed local requests, and no horizontal overflow at desktop or mobile.
+- Above-the-fold copy diff: requested headings, filter labels, mode controls, and relationship legend are present; no unrelated navigation or feature copy was added.
+- Intentional deviation: portrait framing uses the project’s official/local game-profile assets rather than the concept’s invented painted portraits; this preserves source fidelity and attribution.
+- Final result: faithfully verified against both accepted concepts; no actionable visual or functional mismatch remains.
