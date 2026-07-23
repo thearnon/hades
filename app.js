@@ -5,8 +5,9 @@
    ========================================================================= */
 
 /* ---- App state -------------------------------------------------------- */
+const initialSection = window.location.hash.slice(1);
 const state = {
-  section: 'overview',   // active sidebar section id
+  section: SECTIONS.some((section) => section.id === initialSection) ? initialSection : 'overview',
   weapon: 'stygius',     // selected weapon id (weapons screen)
   god: 'zeus',           // selected god id (boons screen)
   showLatin: true,       // show Latin epithets under names
@@ -16,6 +17,8 @@ const state = {
   relationshipMode: 'overview',
   relationshipFilter: 'all',
   relationshipFocus: 'zagreus',
+  beginnerScenario: 'no-core',
+  beginnerChecklist: [],
 };
 
 /* ---- Small helpers ---------------------------------------------------- */
@@ -328,6 +331,143 @@ function renderMindset() {
     </div>
 
     <div class="grid auto-280 gap-14">${tips}</div>
+  </div>`;
+}
+
+function renderBeginner() {
+  const selectedScenario = BEGINNER_DOOR_SCENARIOS.find((scenario) => scenario.id === state.beginnerScenario)
+    || BEGINNER_DOOR_SCENARIOS[0];
+  const completedItems = BEGINNER_CHECKLIST.filter((item) => state.beginnerChecklist.includes(item.id)).length;
+  const completion = Math.round((completedItems / BEGINNER_CHECKLIST.length) * 100);
+
+  const goals = BEGINNER_RUN_GOALS.map((goal) => `
+    <article class="run-goal" style="--accent:${goal.color}">
+      <div class="run-goal__no">${goal.no}</div>
+      <div class="run-goal__copy">
+        <h2 class="run-goal__title">${goal.title}</h2>
+        <div class="run-goal__label">${goal.label}</div>
+        <p>${goal.desc}</p>
+      </div>
+    </article>`).join('');
+
+  const checklist = BEGINNER_CHECKLIST.map((item) => {
+    const checked = state.beginnerChecklist.includes(item.id);
+    return `<button type="button" class="preflight-item${checked ? ' is-checked' : ''}" data-beginner-check="${item.id}" aria-pressed="${checked}">
+      <span class="preflight-item__check" aria-hidden="true">${checked ? icon('M5 12l4 4L19 6', 17, { width: 2.2 }) : ''}</span>
+      <span class="preflight-item__copy"><b>${item.title}</b><small>${item.desc}</small></span>
+    </button>`;
+  }).join('');
+
+  const scenarioTabs = BEGINNER_DOOR_SCENARIOS.map((scenario) => `
+    <button type="button" class="scenario-tab${scenario.id === selectedScenario.id ? ' is-active' : ''}"
+      data-beginner-scenario="${scenario.id}" aria-pressed="${scenario.id === selectedScenario.id}">
+      ${scenario.label}
+    </button>`).join('');
+
+  const priorities = selectedScenario.priorities.map((item, index) => `
+    <li class="door-priority">
+      <span class="door-priority__no">${String(index + 1).padStart(2, '0')}</span>
+      <span class="door-priority__copy"><b>${item.reward}</b><small>${item.why}</small></span>
+    </li>`).join('');
+
+  const combatRules = BEGINNER_COMBAT_RULES.map((rule) => `
+    <article class="combat-rule">
+      <span class="combat-rule__no">${rule.no}</span>
+      <div><h3>${rule.title}</h3><p>${rule.body}</p></div>
+    </article>`).join('');
+
+  const mistakes = BEGINNER_MISTAKES.map((item) => `
+    <li class="mistake-row">
+      <span class="mistake-row__problem">${item.problem}</span>
+      <span class="mistake-row__arrow" aria-hidden="true">${icon('M5 12h14 M13 6l6 6-6 6', 17, { width: 1.8 })}</span>
+      <span class="mistake-row__fix">${item.fix}</span>
+    </li>`).join('');
+
+  return `<div class="screen" data-screen-label="แผนรันมือใหม่">
+    <div class="eyebrow">FIRST RUN PLAYBOOK</div>
+    <h1 class="section-title">แผนรันมือใหม่</h1>
+    <p class="lead">หน้านี้ไม่บอกให้จำบิลด์สำเร็จรูป แต่ช่วยให้แต่ละรันมีทิศทาง: ตั้งเป้าหนึ่งอย่าง วางแกนดาเมจหนึ่งปุ่ม แล้วเลือกของที่แก้ปัญหาปัจจุบัน</p>
+
+    <section class="beginner-section" aria-labelledby="run-goal-title">
+      <div class="beginner-heading">
+        <div>
+          <span class="beginner-heading__step">STEP 01</span>
+          <h2 id="run-goal-title">เลือกเป้าหมายหลักของรัน</h2>
+        </div>
+        <p>หนึ่งรันทำได้หลายอย่าง แต่มี Primary Goal เดียวจะตัดสินใจง่ายกว่า</p>
+      </div>
+      <div class="run-goal-grid">${goals}</div>
+    </section>
+
+    <section class="beginner-section" aria-labelledby="preflight-title">
+      <div class="preflight">
+        <div class="preflight__summary">
+          <span class="beginner-heading__step">STEP 02</span>
+          <h2 id="preflight-title">เช็ก 4 ข้อก่อนออกจากบ้าน</h2>
+          <p>ถ้าตอบได้ครบ คุณจะรู้ทันทีว่าควรเลือก Boon, Keepsake และประตูแบบไหน</p>
+          <div class="preflight__count"><b>${completedItems}</b><span>/ ${BEGINNER_CHECKLIST.length} พร้อมแล้ว</span></div>
+          <div class="preflight__meter" role="progressbar" aria-label="ความพร้อมก่อนออกรัน" aria-valuemin="0" aria-valuemax="4" aria-valuenow="${completedItems}">
+            <span style="width:${completion}%"></span>
+          </div>
+          ${completedItems ? '<button type="button" class="preflight__reset" data-beginner-reset>เริ่มเช็กใหม่</button>' : ''}
+        </div>
+        <div class="preflight__list">${checklist}</div>
+      </div>
+    </section>
+
+    <section class="beginner-section" aria-labelledby="door-title">
+      <div class="beginner-heading beginner-heading--compact">
+        <div>
+          <span class="beginner-heading__step">STEP 03</span>
+          <h2 id="door-title">เลือกประตูไหนดี?</h2>
+        </div>
+        <p>เลือกสถานการณ์ที่ใกล้กับรันตอนนี้ แล้วใช้ลำดับนี้เป็นเข็มทิศ ไม่ใช่กฎตายตัว</p>
+      </div>
+      <div class="scenario-tabs" aria-label="สถานการณ์ของรัน">${scenarioTabs}</div>
+      <div class="door-decision" aria-live="polite">
+        <div class="door-decision__intro">
+          <span>สถานการณ์ตอนนี้</span>
+          <h3>${selectedScenario.title}</h3>
+          <p>${selectedScenario.summary}</p>
+        </div>
+        <ol class="door-priorities">${priorities}</ol>
+      </div>
+    </section>
+
+    <section class="beginner-section" aria-labelledby="combat-title">
+      <div class="beginner-heading">
+        <div>
+          <span class="beginner-heading__step">STEP 04</span>
+          <h2 id="combat-title">ต่อสู้ด้วยวงจร 3 จังหวะ</h2>
+        </div>
+        <p>สิ่งที่ทำให้ไปได้ไกลขึ้นไม่ใช่กดเร็วกว่าเสมอ แต่คือเปิดช่องให้ตัวเองโดนน้อยลง</p>
+      </div>
+      <div class="combat-flow">${combatRules}</div>
+    </section>
+
+    <section class="beginner-section" aria-labelledby="review-title">
+      <div class="beginner-heading beginner-heading--compact">
+        <div>
+          <span class="beginner-heading__step">AFTER THE RUN</span>
+          <h2 id="review-title">เปลี่ยนสาเหตุที่ตายเป็นแผนรันถัดไป</h2>
+        </div>
+        <p>เลือกแก้ทีละหนึ่งพฤติกรรม จะเห็นพัฒนาการชัดกว่าการเปลี่ยนทุกอย่างพร้อมกัน</p>
+      </div>
+      <ul class="mistake-list">${mistakes}</ul>
+      <div class="after-run">
+        <div><span>01</span><p>ดาเมจหลักมาจากปุ่มไหน?</p></div>
+        <div><span>02</span><p>เสีย HP มากที่สุดจากศัตรูหรือพฤติกรรมอะไร?</p></div>
+        <div><span>03</span><p>รันถัดไปจะทดลองแก้เพียงข้อใด?</p></div>
+      </div>
+    </section>
+
+    <aside class="god-mode-note">
+      <div class="god-mode-note__icon">${icon('M12 3l7 3v5c0 4.6-2.8 8.3-7 10-4.2-1.7-7-5.4-7-10V6z M9 12l2 2 4-5', 28, { width: 1.6 })}</div>
+      <div>
+        <h2>ติดจุดเดิมจนไม่สนุก? เปิด God Mode ได้</h2>
+        <p>God Mode เริ่มด้วยการลดดาเมจที่ได้รับ 20% และเพิ่มอีก 2% ทุกครั้งที่ Escape Attempt จบด้วยความตาย สูงสุด 80% เปิด–ปิดได้ใน Settings และไม่ปิดกั้นเนื้อหาหรือ Achievement</p>
+      </div>
+    </aside>
   </div>`;
 }
 
@@ -865,6 +1005,7 @@ const RENDERERS = {
   overview: renderOverview,
   core: renderCore,
   mindset: renderMindset,
+  beginner: renderBeginner,
   chars: renderChars,
   relations: renderRelations,
   weapons: renderWeapons,
@@ -886,6 +1027,7 @@ function render() {
 function goToSection(id) {
   if (!RENDERERS[id]) return;
   state.section = id;
+  if (window.location.hash !== `#${id}`) window.history.replaceState(null, '', `#${id}`);
   render();
   const main = document.getElementById('main');
   if (main) main.scrollTop = 0;
@@ -961,6 +1103,30 @@ document.addEventListener('click', (e) => {
 
   const god = e.target.closest('[data-god]');
   if (god) { state.god = god.dataset.god; render(); return; }
+
+  const beginnerScenario = e.target.closest('[data-beginner-scenario]');
+  if (beginnerScenario) {
+    state.beginnerScenario = beginnerScenario.dataset.beginnerScenario;
+    render();
+    return;
+  }
+
+  const beginnerCheck = e.target.closest('[data-beginner-check]');
+  if (beginnerCheck) {
+    const id = beginnerCheck.dataset.beginnerCheck;
+    state.beginnerChecklist = state.beginnerChecklist.includes(id)
+      ? state.beginnerChecklist.filter((item) => item !== id)
+      : [...state.beginnerChecklist, id];
+    render();
+    return;
+  }
+
+  const beginnerReset = e.target.closest('[data-beginner-reset]');
+  if (beginnerReset) {
+    state.beginnerChecklist = [];
+    render();
+    return;
+  }
 });
 
 window.addEventListener('resize', () => {
