@@ -1,0 +1,41 @@
+/* =========================================================================
+   HADES — ไกด์ระบบเกม & เคล็ดลับการเล่น
+   Main stylesheet imported by Vite
+   ========================================================================= */
+
+/* ---- Design tokens ---------------------------------------------------- */
+:root {
+  --bg: #18131e;
+  --ink: #f6efe6;
+  --ink-bright: #fff8ed;
+
+  --muted: #cfc5b9;
+  --muted-2: #c4baae;
+  --muted-3: #b9afa4;
+  --muted-4: #d5cabd;
+  --muted-5: #ddd3c7;
+
+  --teal: #35cdbd;
+  --teal-bright: #5fe0d1;
+
+  --ember: #ff5a2c;
+  --ember-light: #ff8f4d;
+  --ember-2: #ff7a3d;
+  --ember-3: #ff9a5a;
+  --gold: #e7c26a;
+  --purple: #c98fe0;
+  --titan: #b23ad6;
+
+  --surface: #231b2b;
+  --surface-2: #282030;
+  --panel: #1e1726;
+  --chip: #2c2235;
+
+  --border: #43364f;
+  --border-2: #50415e;
+
+  --warm-bg: #2c2118;
+  --warm-border: #65482d;
+  --teal-bg: #192b2b;
+  --teal-border: #396a63;
+}

@@ -8,9 +8,9 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$manifestPath = Join-Path $repoRoot 'assets/source-manifest.json'
+$manifestPath = Join-Path $repoRoot 'public/assets/source-manifest.json'
 if (-not $OutputRoot) {
-  $OutputRoot = Join-Path $repoRoot 'assets/game'
+  $OutputRoot = Join-Path $repoRoot 'public/assets/game'
 }
 
 $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json

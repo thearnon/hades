@@ -1,0 +1,101 @@
+/* ---- Biomes ----------------------------------------------------------- */
+.region-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.region-gallery .media-frame { margin: 0; }
+.media-frame--region img { aspect-ratio: 4 / 3; }
+.region-gallery .media-frame:nth-child(2) img { object-position: 50% 42%; }
+.region-gallery .media-frame:nth-child(3) img { object-position: 48% 43%; }
+.biome {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 20px;
+  border-radius: 15px;
+  padding: 22px 24px;
+  border-left: 4px solid var(--accent);
+}
+.biome__no { font-family: 'Cinzel', serif; font-weight: 900; font-size: 46px; line-height: 1; color: var(--accent); opacity: .9; }
+.biome__head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.biome__name { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 23px; margin: 0; color: var(--ink-bright); }
+.biome__latin { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px; color: var(--accent); }
+.biome__vibe { margin: 8px 0 12px; font-size: 14.5px; line-height: 1.65; color: var(--muted); }
+.biome__box { border-radius: 10px; padding: 12px 14px; }
+.biome__box-label { font-size: 11.5px; letter-spacing: .5px; margin-bottom: 4px; }
+.biome__box--enemies .biome__box-label { color: #a9b9b5; }
+.biome__box--enemies .biome__box-text { font-size: 13.5px; line-height: 1.55; color: var(--muted-5); }
+.biome__box--boss .biome__box-label { color: var(--ember-3); }
+.biome__box--boss .biome__box-text { font-size: 13.5px; line-height: 1.55; color: #d8cdbe; }
+
+.extra { padding: 14px 16px; border-radius: 11px; }
+.extra__name { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 14.5px; color: var(--gold); margin-bottom: 5px; }
+.extra__desc { font-size: 13px; line-height: 1.6; color: var(--muted-2); }
+
+/* ---- Upgrades --------------------------------------------------------- */
+.mirror {
+  background: linear-gradient(120deg, #2d2238, #251d30);
+  border: 1px solid #60466c;
+  border-radius: 16px;
+  padding: 24px 26px;
+  margin-bottom: 22px;
+}
+.mirror__title { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 20px; color: var(--purple); margin-bottom: 5px; }
+.mirror__intro { margin: 0 0 16px; font-size: 14.5px; line-height: 1.7; color: #b8aec2; }
+.mirror-item { border-radius: 10px; padding: 13px 15px; }
+.mirror-item__pair { font-family: 'Cinzel', serif; font-size: 12.5px; color: var(--purple); margin-bottom: 5px; }
+.mirror-item__desc { font-size: 13px; line-height: 1.55; color: var(--muted-4); }
+.mirror__note {
+  margin-top: 14px;
+  border-radius: 10px;
+  padding: 12px 15px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #d8cdbe;
+}
+.mirror__note b { color: var(--ember-3); }
+
+.upgrade { border-radius: 14px; padding: 20px 22px; }
+.upgrade__title { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 17px; margin-bottom: 7px; }
+.upgrade p { margin: 0; font-size: 14px; line-height: 1.7; color: var(--muted); }
+
+/* ---- Keepsakes -------------------------------------------------------- */
+.keepsake {
+  min-height: 126px;
+  padding: 14px 16px 14px 14px;
+  display: grid;
+  grid-template-columns: 66px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+}
+.keepsake__icon {
+  width: 66px;
+  height: 82px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid #53425f;
+  background: radial-gradient(circle at 50% 55%, #46354f, #251e2d 72%);
+  color: var(--gold);
+  overflow: hidden;
+}
+.keepsake__img { position: relative; z-index: 1; width: 58px; height: 74px; object-fit: contain; }
+.keepsake__copy { min-width: 0; }
+.keepsake__name { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 15px; color: var(--ink); }
+.keepsake__from { font-size: 11.5px; color: #a9b9b5; margin: 2px 0 9px; }
+.keepsake__effect { font-size: 13.5px; line-height: 1.6; color: var(--muted-4); }
+.keepsake--gods { grid-template-columns: 138px minmax(0, 1fr); }
+.keepsake__god-row {
+  display: grid;
+  grid-template-columns: repeat(4, 30px);
+  gap: 4px;
+  align-content: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid #53425f;
+  background: #251e2d;
+}
+.keepsake__god-img { width: 30px; height: 34px; object-fit: contain; }

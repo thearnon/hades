@@ -1,0 +1,7 @@
+/* ---- Inline emphasis colors (shared) --------------------------------- */
+.c-ink { color: var(--ink); }
+.c-teal { color: var(--teal-bright); }
+.c-gold { color: var(--gold); }
+.c-ember { color: var(--ember-3); }
+.c-titan { color: var(--titan); }
+.c-pink { color: #e56aa6; }

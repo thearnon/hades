@@ -1,50 +1,76 @@
 # HADES — ไกด์ระบบเกม & เคล็ดลับการเล่น
 
-เว็บไกด์เกม Hades แบบ single-page แยกไฟล์ HTML / CSS / JS พร้อมเปิดแก้ใน IDE ทันที
-(ไม่มี build step, ไม่มี framework — เป็น vanilla ล้วน)
+เว็บไกด์เกม Hades แบบ single-page สร้างด้วย Vite + Vanilla TypeScript
+ไม่มี UI framework และแยก state, content, renderer และ asset helpers ออกจากกันเพื่อรองรับเนื้อหาที่จะเพิ่มในอนาคต
 
 ## โครงสร้างไฟล์
 
 ```
-export/
-├── index.html    โครงหน้า (sidebar + main) โหลด CSS/JS
-├── styles.css    สไตล์ทั้งหมด (แยกเป็น class จาก inline style เดิม)
-├── data.js       ข้อมูลเกมทั้งหมด (อาวุธ, เทพ, บอส, keepsake ฯลฯ) — แก้เนื้อหาที่นี่
-├── app.js        ตรรกะ render + การกดสลับหน้า/อาวุธ/เทพ
-├── scripts/      สคริปต์ดึง game assets สำหรับใช้งาน local
-└── assets/       ภาพทางการ, source manifest, attribution และไอคอนโปรเจกต์
+hades/
+├── index.html               App shell และ Vite entry
+├── src/
+│   ├── main.ts              Render dispatch, routing และ events
+│   ├── app/                 State, navigation และ asset helpers
+│   ├── data/                เนื้อหาแยกตามโดเมน
+│   ├── pages/               Renderer แยกตามกลุ่มหน้าจอ
+│   ├── styles/              Tokens, primitives, page styles และ responsive
+│   └── types/               Shared TypeScript types
+├── public/assets/           Static assets และเอกสาร attribution
+├── scripts/                 สคริปต์ดึง game assets สำหรับใช้งาน local
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
 ```
 
 ## วิธีรัน
 
-ดาวน์โหลดชุดภาพตัวละคร อาวุธ Boon Keepsake และไอเทมที่คัดไว้ก่อน (ไฟล์ภาพจริงถูก `.gitignore` เพื่อไม่แจกจ่าย game assets ปะปนกับโค้ด):
+ติดตั้ง dependencies:
+
+```bash
+npm install
+```
+
+ดาวน์โหลดชุดภาพตัวละคร อาวุธ Boon Keepsake และไอเทมที่คัดไว้ (ไฟล์ภาพจริงถูก `.gitignore` เพื่อไม่แจกจ่าย game assets ปะปนกับโค้ด):
 
 ```powershell
 ./scripts/fetch-game-assets.ps1
 ```
 
-เป็นไฟล์ static ล้วน — เปิด `index.html` ในเบราว์เซอร์ได้เลย
-หรือรันผ่าน local server เพื่อความชัวร์ (แนะนำเวลาแก้ใน IDE):
+เริ่ม development server:
 
 ```bash
-# ตัวเลือกใดก็ได้
-npx serve export
-python3 -m http.server 8000   # แล้วเปิด http://localhost:8000/export/
+npm run dev
+```
+
+ตรวจ type และสร้าง production bundle:
+
+```bash
+npm run typecheck
+npm run build
+npm run preview
 ```
 
 > ฟอนต์ (Cinzel, Kanit, IBM Plex Sans Thai) โหลดจาก Google Fonts จึงต้องต่อเน็ตขณะเปิด
 
 ## ภาพประกอบ
 
-ภาพ editorial คัดจากชุดสื่อทางการของ Supergiant Games ส่วน portrait และไอคอนในเกม resolve จาก Hades Wiki ผ่าน MediaWiki API โดยไม่ hotlink รายการต่อไฟล์อยู่ใน `assets/source-manifest.json` และรายละเอียดสิทธิ์/แหล่งที่มาอยู่ใน `assets/ASSET_SOURCES.md` กับ `assets/ATTRIBUTIONS.md` ส่วนไอคอน SVG ใน `assets/icons/` เป็นงานต้นฉบับที่สร้างสำหรับเว็บนี้โดยเฉพาะ
+ภาพ editorial คัดจากชุดสื่อทางการของ Supergiant Games ส่วน portrait และไอคอนในเกม resolve จาก Hades Wiki ผ่าน MediaWiki API โดยไม่ hotlink รายการต่อไฟล์อยู่ใน `public/assets/source-manifest.json` และรายละเอียดสิทธิ์/แหล่งที่มาอยู่ใน `public/assets/ASSET_SOURCES.md` กับ `public/assets/ATTRIBUTIONS.md` ส่วนไอคอน SVG ใน `public/assets/icons/` เป็นงานต้นฉบับที่สร้างสำหรับเว็บนี้โดยเฉพาะ
 
 โปรเจกต์นี้เป็นไกด์แฟนเมดอย่างไม่เป็นทางการและไม่ได้รับการรับรองโดย Supergiant Games ตัว game assets ไม่อยู่ภายใต้ MIT license ของ repo ดู `DISCLAIMER.md` ก่อนนำไปเผยแพร่
 
 ## แก้อะไรตรงไหน
 
-- **เพิ่ม/แก้เนื้อหา** (อาวุธ, บิลด์, เทพ, บอส, currency, keepsake) → `data.js`
-- **ปรับหน้าตา/สี/สเปซ** → `styles.css` (ชุดสีอยู่ที่ `:root` ด้านบนสุด)
-- **แก้โครงสร้างหน้า/การทำงาน** → ฟังก์ชัน `render*()` ใน `app.js`
+- **ภาพรวม ระบบหลัก Mindset** → `src/data/navigation.ts`
+- **แผนรันมือใหม่** → `src/data/beginner.ts`
+- **ตัวละครและความสัมพันธ์** → `src/data/characters.ts`
+- **อาวุธ บิลด์ และ Boon** → `src/data/arsenal.ts`
+- **แผนที่ การอัพเกรด และ Keepsake** → `src/data/world.ts`
+- **HTML ของแต่ละหน้าจอ** → `src/pages/`
+- **State, navigation และ asset helpers** → `src/app/`
+- **Design tokens และโครงหน้าหลัก** → `src/styles/tokens.css`, `base.css`, `primitives.css`
+- **สไตล์เฉพาะหน้า** → `src/styles/pages/`
+- **Responsive layout** → `src/styles/responsive.css`
+- **Event และ render dispatch** → `src/main.ts`
 
 ## หน้าจอในเว็บ
 

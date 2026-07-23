@@ -1,0 +1,93 @@
+/* ---- Characters ------------------------------------------------------- */
+.hero-card {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 22px;
+  align-items: center;
+  background: linear-gradient(120deg, #30233a, #261d2f);
+  border: 1px solid #60466c;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 28px;
+}
+.hero-card__avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #422d49, #553445);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #704c68;
+  position: relative;
+  overflow: hidden;
+}
+.hero-card__avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 13px;
+  object-fit: contain;
+  object-position: 50% 100%;
+  position: relative;
+  z-index: 1;
+  background: radial-gradient(circle at 50% 82%, #573846 0, #30233a 66%);
+}
+.hero-card__kicker { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 2px; color: var(--teal); }
+.hero-card__name { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 27px; color: var(--ink-bright); margin: 3px 0 8px; }
+.hero-card p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--muted-4); }
+
+.person {
+  min-height: 124px;
+  padding: 14px 16px 14px 14px;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+.person__portrait {
+  width: 72px;
+  height: 82px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #574361;
+  background: radial-gradient(circle at 50% 76%, #513845, #2a2133 72%);
+  color: #a888e8;
+}
+.person__img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; }
+.person__copy { min-width: 0; }
+.person__name { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 15.5px; color: var(--ink); }
+.person__latin { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1.2px; color: #aaa0b8; margin: 1px 0 6px; }
+.person__role { font-size: 13.5px; line-height: 1.6; color: var(--muted-2); }
+
+.companion-portraits { display: flex; flex-wrap: wrap; gap: 8px; margin: 9px 0 12px; }
+.companion-portrait {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 9px 4px 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 126, 82, .28);
+  background: rgba(32, 23, 38, .45);
+}
+.companion-portrait__img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  background: #2c2133;
+}
+.companion-portrait small { font-family: 'Kanit', sans-serif; font-size: 11px; color: #dccfc0; }
+
+.pair-box { padding: 18px 20px; border-radius: 13px; }
+.info-title { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 16px; margin-bottom: 6px; }
+.info-title--teal { color: var(--teal-bright); }
+.info-title--ember { color: var(--ember-3); }
+.pair-box p { margin: 0; font-size: 14px; line-height: 1.65; }
+.pair-box--teal p { color: #c1d0cc; margin-bottom: 10px; }
+.pair-box--ember p { color: var(--muted-4); }

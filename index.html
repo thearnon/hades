@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app">
@@ -21,7 +20,7 @@
       <div class="sidebar-footer">
         ไกด์แฟนเมดอย่างไม่เป็นทางการ ไม่เกี่ยวข้องหรือได้รับการรับรองโดย Supergiant Games<br>
         <span class="sidebar-footer__rights">Hades content and materials © Supergiant Games, LLC or its licensors. Used with permission. All rights reserved.</span>
-        <a href="assets/ATTRIBUTIONS.md" target="_blank" rel="noopener">แหล่งที่มาของภาพ</a>
+        <a href="%BASE_URL%assets/ATTRIBUTIONS.md" target="_blank" rel="noopener">แหล่งที่มาของภาพ</a>
       </div>
     </aside>
 
@@ -31,8 +30,6 @@
     </main>
   </div>
 
-  <!-- Data first, then the app that consumes it -->
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
