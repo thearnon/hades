@@ -14,4 +14,8 @@ export function renderNav(): void {
       <span>${section.label}</span>
     </button>`;
   }).join('');
+
+  // Keep the active item visible in the horizontally scrolling mobile nav.
+  nav.querySelector<HTMLElement>('.nav-item.is-active')
+    ?.scrollIntoView({ inline: 'center', block: 'nearest' });
 }

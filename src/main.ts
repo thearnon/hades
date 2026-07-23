@@ -48,21 +48,85 @@ function closest(target: EventTarget | null, selector: string): HTMLElement | nu
   return target instanceof Element ? target.closest<HTMLElement>(selector) : null;
 }
 
-function render(): void {
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+// Data attributes that mark a re-rendered interactive control. Used to return
+// keyboard focus to the same control after the content is rebuilt.
+const FOCUS_ATTRS = [
+  'data-section',
+  'data-character-filter',
+  'data-character-toggle',
+  'data-character-expand-all',
+  'data-relationship-mode',
+  'data-relationship-filter',
+  'data-relation-node',
+  'data-weapon',
+  'data-god',
+  'data-beginner-scenario',
+  'data-beginner-check',
+  'data-beginner-reset',
+] as const;
+
+let previousSection: SectionId | null = null;
+
+function focusSelector(element: Element | null): string | null {
+  if (!element) return null;
+  for (const attr of FOCUS_ATTRS) {
+    const value = element.getAttribute(attr);
+    if (value === null) continue;
+    return value === '' ? `[${attr}]` : `[${attr}="${CSS.escape(value)}"]`;
+  }
+  return null;
+}
+
+function doRender(): void {
   renderNav();
   getContentMount().innerHTML = RENDERERS[state.section]();
   if (state.section === 'relations') window.setTimeout(drawRelationshipLines, 0);
 }
 
-function goToSection(id: string): void {
+function render(afterRender?: () => void): void {
+  const sectionChanged = state.section !== previousSection;
+  previousSection = state.section;
+
+  // Keep the keyboard user on the same control across the full re-render.
+  const restoreTarget = focusSelector(document.activeElement);
+  const settle = (): void => {
+    if (restoreTarget) {
+      document.querySelector<HTMLElement>(restoreTarget)?.focus({ preventScroll: true });
+    }
+    afterRender?.();
+  };
+
+  const startViewTransition = document.startViewTransition?.bind(document);
+  if (startViewTransition && !prefersReducedMotion.matches) {
+    // Native crossfade between states — no dependency; reduced-motion opts out above.
+    startViewTransition(doRender).updateCallbackDone.then(settle).catch(() => {});
+    return;
+  }
+
+  doRender();
+  if (sectionChanged && !prefersReducedMotion.matches) {
+    getContentMount().firstElementChild?.classList.add('screen--enter');
+  }
+  settle();
+}
+
+function scrollMainToTop(): void {
+  const main = document.getElementById('main');
+  if (main) main.scrollTop = 0;
+}
+
+function goToSection(id: string, afterRender?: () => void): void {
   if (!isSectionId(id)) return;
 
   state.section = id;
-  if (window.location.hash !== `#${id}`) window.history.replaceState(null, '', `#${id}`);
-  render();
-
-  const main = document.getElementById('main');
-  if (main) main.scrollTop = 0;
+  const hash = `#${id}`;
+  if (window.location.hash !== hash) window.history.pushState(null, '', hash);
+  render(() => {
+    scrollMainToTop();
+    afterRender?.();
+  });
 }
 
 document.addEventListener('click', (event) => {
@@ -71,11 +135,12 @@ document.addEventListener('click', (event) => {
     state.characterFilter = 'all';
     state.expandAllCharacters = false;
     state.expandedCharacter = characterLink.dataset.characterLink;
-    goToSection('chars');
-    requestAnimationFrame(() => {
-      document.getElementById(`character-${state.expandedCharacter}`)?.scrollIntoView({
-        block: 'start',
-        behavior: 'smooth',
+    goToSection('chars', () => {
+      requestAnimationFrame(() => {
+        document.getElementById(`character-${state.expandedCharacter}`)?.scrollIntoView({
+          block: 'start',
+          behavior: 'smooth',
+        });
       });
     });
     return;
@@ -106,9 +171,10 @@ document.addEventListener('click', (event) => {
     const id = characterToggle.dataset.characterToggle;
     state.expandAllCharacters = false;
     state.expandedCharacter = state.expandedCharacter === id ? null : id;
-    render();
-    requestAnimationFrame(() => {
-      document.getElementById(`character-${id}`)?.scrollIntoView({ block: 'nearest' });
+    render(() => {
+      requestAnimationFrame(() => {
+        document.getElementById(`character-${id}`)?.scrollIntoView({ block: 'nearest' });
+      });
     });
     return;
   }
@@ -187,6 +253,15 @@ document.addEventListener('click', (event) => {
 
 window.addEventListener('resize', () => {
   if (state.section === 'relations') window.setTimeout(drawRelationshipLines, 0);
+});
+
+// Browser back/forward navigate between sections (each is pushed in goToSection).
+window.addEventListener('popstate', () => {
+  const requested = window.location.hash.slice(1);
+  const next = isSectionId(requested) ? requested : 'overview';
+  if (next === state.section) return;
+  state.section = next;
+  render(scrollMainToTop);
 });
 
 render();

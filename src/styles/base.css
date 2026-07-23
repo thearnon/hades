@@ -150,4 +150,7 @@ a:hover { color: #6fe3d5; }
   padding: 40px 36px 110px 44px;
 }
 
-.screen { animation: secIn .34s ease both; }
+/* Entrance plays only on section change (added from JS), never on in-page
+   state updates, so filters/toggles don't re-animate the whole page.
+   When the View Transitions API is available the native crossfade replaces it. */
+.screen--enter { animation: secIn .34s ease both; }
