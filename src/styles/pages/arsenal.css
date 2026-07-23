@@ -19,8 +19,12 @@
   color: #170b04;
 }
 .wchip__art {
-  width: 70px;
-  height: 48px;
+  /* Weapon artwork is tall, full-body render with varied aspect ratios.
+     A square frame (matching the god/boon/legendary icon frames) keeps every
+     weapon at a consistent, legible size instead of squashing the tall ones
+     (sword, spear) into thin slivers inside a wide, short box. */
+  width: 72px;
+  height: 68px;
   position: relative;
   display: grid;
   place-items: center;
