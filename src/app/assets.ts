@@ -186,7 +186,7 @@ export const LEGENDARY_IMAGES: Record<string, string> = {
 };
 
 export function gameAsset(relativePath: string, alt: string, className = '') {
-  return `<img src="${GAME_ASSET_ROOT}/${relativePath}" alt="${alt}" class="${className}" loading="lazy" decoding="async" onload="if(this.previousElementSibling?.classList.contains('asset-fallback'))this.previousElementSibling.hidden=true" onerror="this.hidden=true">`;
+  return `<img src="${GAME_ASSET_ROOT}/${relativePath}" alt="${alt}" class="asset-img ${className}" loading="lazy" decoding="async" onload="if(this.previousElementSibling?.classList.contains('asset-fallback'))this.previousElementSibling.hidden=true" onerror="this.hidden=true">`;
 }
 
 export function characterPortrait(character: Character, className = '') {
@@ -197,7 +197,7 @@ export function characterPortrait(character: Character, className = '') {
 
 export function mediaFigure(src: string, alt: string, caption: string, className = '') {
   return `<figure class="media-frame ${className}">
-    <img src="${src}" alt="${alt}" loading="lazy" decoding="async">
+    <img src="${src}" alt="${alt}" class="asset-img" loading="lazy" decoding="async">
     <figcaption>${caption}</figcaption>
   </figure>`;
 }

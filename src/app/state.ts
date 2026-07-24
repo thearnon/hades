@@ -1,7 +1,8 @@
 import { SECTIONS } from '../data/navigation';
 import type { AppState, SectionId } from '../types/content';
 
-const requestedSection = window.location.hash.slice(1);
+// Hash is #section or #section/selection (the selection is applied in main.ts).
+const requestedSection = window.location.hash.slice(1).split('/')[0];
 const initialSection = SECTIONS.find((section) => section.id === requestedSection)?.id ?? 'overview';
 
 export const state: AppState = {

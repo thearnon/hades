@@ -69,6 +69,14 @@
   to { opacity: 1; transform: none; }
 }
 
+/* ---- Image fade-in ----------------------------------------------------
+   Lazy-loaded art fades in once decoded instead of popping. `is-loaded` is
+   added by a global capture load/error listener (main.ts) so it fires for
+   images from every render path — and on error too, so a failed image is
+   never left permanently invisible by the initial opacity:0. */
+.asset-img { opacity: 0; }
+.asset-img.is-loaded { opacity: 1; transition: opacity var(--dur-base) var(--ease-out); }
+
 /* ---- Relationship lines reveal ---------------------------------------
    The whole lines layer fades in when it is (re)drawn on a focus/filter
    change, without touching each path's opacity (which encodes focus state)

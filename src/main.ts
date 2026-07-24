@@ -3,6 +3,7 @@ import './styles/main.css';
 import { renderNav } from './app/navigation';
 import { revealContent } from './app/motion';
 import { isSectionId, state } from './app/state';
+import { GODS, WEAPONS } from './data/arsenal';
 import { CHARACTERS } from './data/characters';
 import {
   renderBeginner,
@@ -131,12 +132,62 @@ function scrollMainToTop(): void {
   if (main) main.scrollTop = 0;
 }
 
+// Sections whose primary selection is encoded in the URL as #section/selection,
+// so a specific weapon / god / character view is shareable and bookmarkable.
+interface SelectionAccessor {
+  get: () => string | null;
+  set: (id: string) => void;
+  isValid: (id: string) => boolean;
+}
+const SECTION_SELECTION: Partial<Record<SectionId, SelectionAccessor>> = {
+  weapons: {
+    get: () => state.weapon,
+    set: (id) => { state.weapon = id; },
+    isValid: (id) => WEAPONS.some((weapon) => weapon.id === id),
+  },
+  boons: {
+    get: () => state.god,
+    set: (id) => { state.god = id; },
+    isValid: (id) => GODS.some((god) => god.id === id),
+  },
+  chars: {
+    get: () => state.expandedCharacter,
+    set: (id) => { state.expandedCharacter = id; },
+    isValid: (id) => CHARACTERS.some((character) => character.id === id),
+  },
+  relations: {
+    get: () => state.relationshipFocus,
+    set: (id) => { state.relationshipFocus = id; },
+    isValid: (id) => CHARACTERS.some((character) => character.id === id),
+  },
+};
+
+function currentHash(): string {
+  const selection = SECTION_SELECTION[state.section]?.get();
+  return selection ? `#${state.section}/${selection}` : `#${state.section}`;
+}
+
+// Reflect section + selection in the URL. 'push' adds a history entry (section
+// navigation); 'replace' updates in place (an in-page selection change).
+function syncHash(mode: 'push' | 'replace'): void {
+  const hash = currentHash();
+  if (window.location.hash === hash) return;
+  if (mode === 'push') window.history.pushState(null, '', hash);
+  else window.history.replaceState(null, '', hash);
+}
+
+// Apply the selection encoded in the current hash to the active section's state.
+function applyHashSelection(): void {
+  const selection = window.location.hash.slice(1).split('/')[1];
+  const accessor = SECTION_SELECTION[state.section];
+  if (selection && accessor?.isValid(selection)) accessor.set(selection);
+}
+
 function goToSection(id: string, afterRender?: () => void): void {
   if (!isSectionId(id)) return;
 
   state.section = id;
-  const hash = `#${id}`;
-  if (window.location.hash !== hash) window.history.pushState(null, '', hash);
+  syncHash('push');
   render(() => {
     scrollMainToTop();
     afterRender?.();
@@ -177,6 +228,7 @@ document.addEventListener('click', (event) => {
       state.expandedCharacter = visible[0]?.id ?? 'zagreus';
     }
     updateCharacterFilter();
+    syncHash('replace');
     return;
   }
 
@@ -186,6 +238,7 @@ document.addEventListener('click', (event) => {
     state.expandAllCharacters = false;
     state.expandedCharacter = state.expandedCharacter === id ? null : id;
     updateCharacterExpansion();
+    syncHash('replace');
     requestAnimationFrame(() => {
       document.getElementById(`character-${id}`)?.scrollIntoView({ block: 'nearest' });
     });
@@ -202,6 +255,7 @@ document.addEventListener('click', (event) => {
   if (relationshipNode?.dataset.relationNode) {
     state.relationshipFocus = relationshipNode.dataset.relationNode;
     updateRelationshipView();
+    syncHash('replace');
     return;
   }
 
@@ -231,6 +285,7 @@ document.addEventListener('click', (event) => {
   if (weapon?.dataset.weapon) {
     state.weapon = weapon.dataset.weapon;
     updateWeaponSelection();
+    syncHash('replace');
     return;
   }
 
@@ -238,6 +293,7 @@ document.addEventListener('click', (event) => {
   if (god?.dataset.god) {
     state.god = god.dataset.god;
     updateGodSelection();
+    syncHash('replace');
     return;
   }
 
@@ -264,17 +320,28 @@ document.addEventListener('click', (event) => {
   }
 });
 
+// Fade art in once it decodes. Capture phase catches load/error from any image
+// regardless of which render path created it (load/error do not bubble). Marking
+// on error too guarantees a failed image is never stuck invisible.
+const markImageLoaded = (event: Event): void => {
+  if (event.target instanceof HTMLImageElement) event.target.classList.add('is-loaded');
+};
+document.addEventListener('load', markImageLoaded, true);
+document.addEventListener('error', markImageLoaded, true);
+
 window.addEventListener('resize', () => {
   if (state.section === 'relations') window.setTimeout(() => drawRelationshipLines(false), 0);
 });
 
-// Browser back/forward navigate between sections (each is pushed in goToSection).
+// Browser back/forward navigate between sections and restore the deep-linked
+// selection. Section or selection may have changed, so always re-apply + render.
 window.addEventListener('popstate', () => {
-  const requested = window.location.hash.slice(1);
-  const next = isSectionId(requested) ? requested : 'overview';
-  if (next === state.section) return;
+  const rawSection = window.location.hash.slice(1).split('/')[0];
+  const next = isSectionId(rawSection) ? rawSection : 'overview';
   state.section = next;
+  applyHashSelection();
   render(scrollMainToTop);
 });
 
+applyHashSelection(); // restore a deep-linked selection for the initial section
 render();
