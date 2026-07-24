@@ -14,6 +14,7 @@ import {
 } from './pages/basics';
 import {
   drawRelationshipLines,
+  initCharacterGrid,
   renderChars,
   renderRelations,
   updateCharacterExpansion,
@@ -94,6 +95,7 @@ function doRender(): void {
   renderNav();
   getContentMount().innerHTML = RENDERERS[state.section]();
   if (state.section === 'relations') window.setTimeout(() => drawRelationshipLines(), 0);
+  if (state.section === 'chars') initCharacterGrid();
 }
 
 function render(afterRender?: () => void): void {

@@ -1,3 +1,4 @@
+import autoAnimate from '@formkit/auto-animate';
 import { state } from '../app/state';
 import { setActive, swapRegion } from '../app/dom';
 import { animateCount } from '../app/motion';
@@ -119,16 +120,43 @@ function syncExpandAllButton(): void {
   expandAll.textContent = state.expandAllCharacters ? 'ย่อทั้งหมด' : 'เปิดรายละเอียดทั้งหมด';
 }
 
-// Changing the filter: flip filter active-states, patch the count, and rebuild
-// only the card grid.
+// Register auto-animate on the card grid so filter add/remove/reorder is
+// animated by FLIP. Called after the Characters section renders. auto-animate
+// respects prefers-reduced-motion internally.
+export function initCharacterGrid(): void {
+  const grid = document.querySelector<HTMLElement>('.character-dossier-grid');
+  if (grid) autoAnimate(grid);
+}
+
+// Changing the filter: flip filter active-states, then reconcile the grid by id
+// — remove cards that left, insert new ones, reorder the rest — so surviving
+// cards keep their DOM node (identity + open state) and auto-animate can FLIP
+// the transition instead of a hard swap.
 export function updateCharacterFilter(): void {
   const activeFilter = activeCharacterFilter();
   setActive(document.querySelectorAll('[data-character-filter]'), (el) => el.dataset.characterFilter === activeFilter);
+
+  const grid = document.querySelector('.character-dossier-grid');
   const visible = visibleCharacters();
-  swapRegion(document.querySelector('.character-dossier-grid'), visible.map(characterCard).join(''));
+  if (grid) {
+    const wanted = new Set(visible.map((character) => character.id));
+    grid.querySelectorAll<HTMLElement>('.character-dossier').forEach((card) => {
+      if (!wanted.has(card.id.replace('character-', ''))) card.remove();
+    });
+    visible.forEach((character, index) => {
+      let card = grid.querySelector<HTMLElement>(`#character-${CSS.escape(character.id)}`);
+      if (!card) {
+        const template = document.createElement('template');
+        template.innerHTML = characterCard(character).trim();
+        card = template.content.firstElementChild as HTMLElement;
+      }
+      if (grid.children[index] !== card) grid.insertBefore(card, grid.children[index] ?? null);
+    });
+  }
+
+  updateCharacterExpansion(); // re-sync open/closed on the new set (also syncs the expand-all button)
   const count = document.querySelector('[data-character-count]');
   if (count) animateCount(count, visible.length, (n) => `พบ ${n} ตัวละคร`);
-  syncExpandAllButton();
 }
 
 // Expand/collapse: re-sync every card's open state from `state` (a single toggle
