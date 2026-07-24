@@ -1,6 +1,7 @@
 import './styles/main.css';
 
 import { renderNav } from './app/navigation';
+import { revealContent } from './app/motion';
 import { isSectionId, state } from './app/state';
 import { CHARACTERS } from './data/characters';
 import {
@@ -106,6 +107,7 @@ function render(afterRender?: () => void): void {
       document.querySelector<HTMLElement>(restoreTarget)?.focus({ preventScroll: true });
     }
     afterRender?.();
+    revealContent(); // scroll-reveal below-fold blocks (runs after scroll is reset)
   };
 
   const startViewTransition = document.startViewTransition?.bind(document);

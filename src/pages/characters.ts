@@ -1,5 +1,6 @@
 import { state } from '../app/state';
 import { setActive, swapRegion } from '../app/dom';
+import { animateCount } from '../app/motion';
 import {
   RELATIONSHIP_LAYOUT,
   characterPortrait,
@@ -126,7 +127,7 @@ export function updateCharacterFilter(): void {
   const visible = visibleCharacters();
   swapRegion(document.querySelector('.character-dossier-grid'), visible.map(characterCard).join(''));
   const count = document.querySelector('[data-character-count]');
-  if (count) count.textContent = `พบ ${visible.length} ตัวละคร`;
+  if (count) animateCount(count, visible.length, (n) => `พบ ${n} ตัวละคร`);
   syncExpandAllButton();
 }
 
