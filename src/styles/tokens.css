@@ -38,4 +38,15 @@
   --warm-border: #65482d;
   --teal-bg: #192b2b;
   --teal-border: #396a63;
+
+  /* ---- Motion ----------------------------------------------------------
+     One scale so every hover, press, selection swap and transition shares
+     the same feel. Reduced-motion (responsive.css) neutralises durations. */
+  --dur-instant: 90ms;
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 380ms;
+  --ease-out: cubic-bezier(.2, .75, .25, 1);      /* settle — general purpose */
+  --ease-spring: cubic-bezier(.34, 1.42, .5, 1);  /* slight overshoot — press/pop */
+  --ease-in-out: cubic-bezier(.65, .05, .36, 1);
 }

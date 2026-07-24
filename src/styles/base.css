@@ -100,7 +100,7 @@ a:hover { color: #6fe3d5; }
   letter-spacing: .2px;
   cursor: pointer;
   text-align: left;
-  transition: background .15s, color .15s;
+  transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast) var(--ease-spring);
 }
 .nav-item:hover { background: #352a40; color: var(--ink); }
 .nav-item.is-active { border-color: #684b63; background: #44334e; color: #ffe2d0; }

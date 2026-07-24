@@ -10,7 +10,7 @@
   background: var(--chip);
   color: #c9bfd2;
   cursor: pointer;
-  transition: transform .15s;
+  transition: transform var(--dur-fast) var(--ease-spring), border-color var(--dur-fast), background var(--dur-fast);
 }
 .wchip:hover { transform: translateY(-2px); }
 .wchip.is-active {
@@ -151,7 +151,7 @@
   font-family: 'Kanit', sans-serif;
   font-weight: 600;
   font-size: 13.5px;
-  transition: transform .15s, border-color .15s, background .15s, box-shadow .15s;
+  transition: transform var(--dur-fast) var(--ease-spring), border-color var(--dur-fast), background var(--dur-fast), box-shadow var(--dur-fast);
 }
 .gchip:hover { transform: translateY(-2px); border-color: var(--accent); }
 .gchip:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

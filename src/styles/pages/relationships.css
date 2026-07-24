@@ -82,6 +82,7 @@
   grid-template-columns: 112px minmax(0, 1fr) 36px;
   min-height: 112px;
   align-items: stretch;
+  transition: grid-template-columns var(--dur-base) var(--ease-out), min-height var(--dur-base) var(--ease-out);
 }
 .character-dossier.is-expanded .character-dossier__head {
   grid-template-columns: 180px minmax(0, 1fr) 40px;
@@ -167,8 +168,20 @@
 }
 .character-dossier__toggle:hover { background: #3b2d25; }
 .character-dossier.is-expanded .character-dossier__toggle { transform: rotate(180deg); }
-.character-dossier__detail { padding: 20px 22px 22px; }
-.character-dossier__detail[hidden] { display: none; }
+/* Accordion: the detail is always in the DOM so open/close animates. The row
+   collapses to 0fr while closed; the inner wrapper carries the padding and
+   clips, so a closed card has genuinely zero detail height. */
+.character-dossier__detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-base) var(--ease-out);
+}
+.character-dossier.is-expanded .character-dossier__detail { grid-template-rows: 1fr; }
+.character-dossier__detail-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 20px 22px 22px;
+}
 .character-dossier__story {
   margin: 0 0 18px;
   padding: 0 0 16px;

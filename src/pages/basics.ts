@@ -1,4 +1,5 @@
 import { state } from '../app/state';
+import { setActive, swapRegion } from '../app/dom';
 import {
   FEATURE_ICONS,
   ITEM_IMAGES,
@@ -161,12 +162,6 @@ export function renderBeginner() {
       ${scenario.label}
     </button>`).join('');
 
-  const priorities = selectedScenario.priorities.map((item, index) => `
-    <li class="door-priority">
-      <span class="door-priority__no">${String(index + 1).padStart(2, '0')}</span>
-      <span class="door-priority__copy"><b>${item.reward}</b><small>${item.why}</small></span>
-    </li>`).join('');
-
   const combatRules = BEGINNER_COMBAT_RULES.map((rule) => `
     <article class="combat-rule">
       <span class="combat-rule__no">${rule.no}</span>
@@ -206,7 +201,7 @@ export function renderBeginner() {
           <div class="preflight__meter" role="progressbar" aria-label="ความพร้อมก่อนออกรัน" aria-valuemin="0" aria-valuemax="4" aria-valuenow="${completedItems}">
             <span style="width:${completion}%"></span>
           </div>
-          ${completedItems ? '<button type="button" class="preflight__reset" data-beginner-reset>เริ่มเช็กใหม่</button>' : ''}
+          <button type="button" class="preflight__reset" data-beginner-reset ${completedItems ? '' : 'hidden'}>เริ่มเช็กใหม่</button>
         </div>
         <div class="preflight__list">${checklist}</div>
       </div>
@@ -221,14 +216,7 @@ export function renderBeginner() {
         <p>เลือกสถานการณ์ที่ใกล้กับรันตอนนี้ แล้วใช้ลำดับนี้เป็นเข็มทิศ ไม่ใช่กฎตายตัว</p>
       </div>
       <div class="scenario-tabs" aria-label="สถานการณ์ของรัน">${scenarioTabs}</div>
-      <div class="door-decision" aria-live="polite">
-        <div class="door-decision__intro">
-          <span>สถานการณ์ตอนนี้</span>
-          <h3>${selectedScenario.title}</h3>
-          <p>${selectedScenario.summary}</p>
-        </div>
-        <ol class="door-priorities">${priorities}</ol>
-      </div>
+      <div class="door-decision" aria-live="polite">${doorDecisionInner(selectedScenario)}</div>
     </section>
 
     <section class="beginner-section" aria-labelledby="combat-title">
@@ -266,4 +254,59 @@ export function renderBeginner() {
       </div>
     </aside>
   </div>`;
+}
+
+type DoorScenario = (typeof BEGINNER_DOOR_SCENARIOS)[number];
+
+// Shared by the full render and the targeted scenario swap so both stay in sync.
+function doorDecisionInner(scenario: DoorScenario): string {
+  const priorities = scenario.priorities.map((item, index) => `
+    <li class="door-priority">
+      <span class="door-priority__no">${String(index + 1).padStart(2, '0')}</span>
+      <span class="door-priority__copy"><b>${item.reward}</b><small>${item.why}</small></span>
+    </li>`).join('');
+
+  return `<div class="door-decision__intro">
+      <span>สถานการณ์ตอนนี้</span>
+      <h3>${scenario.title}</h3>
+      <p>${scenario.summary}</p>
+    </div>
+    <ol class="door-priorities">${priorities}</ol>`;
+}
+
+// Ticking a checklist item: patch the clicked items, the count, the meter width
+// (same element → its width transition plays) and the reset button visibility.
+// No page rebuild, so focus stays on the tapped item and the meter animates.
+export function updateBeginnerChecklist(): void {
+  const completed = BEGINNER_CHECKLIST.filter((item) => state.beginnerChecklist.includes(item.id)).length;
+  const total = BEGINNER_CHECKLIST.length;
+  const completion = Math.round((completed / total) * 100);
+
+  document.querySelectorAll<HTMLElement>('[data-beginner-check]').forEach((btn) => {
+    const checked = state.beginnerChecklist.includes(btn.dataset.beginnerCheck ?? '');
+    btn.classList.toggle('is-checked', checked);
+    btn.setAttribute('aria-pressed', String(checked));
+    const check = btn.querySelector('.preflight-item__check');
+    if (check) check.innerHTML = checked ? icon('M5 12l4 4L19 6', 17, { width: 2.2 }) : '';
+  });
+
+  const countValue = document.querySelector('.preflight__count b');
+  if (countValue) countValue.textContent = String(completed);
+
+  const meter = document.querySelector('.preflight__meter');
+  meter?.setAttribute('aria-valuenow', String(completed));
+  const meterFill = meter?.querySelector<HTMLElement>('span');
+  if (meterFill) meterFill.style.width = `${completion}%`;
+
+  const reset = document.querySelector<HTMLElement>('[data-beginner-reset]');
+  if (reset) reset.hidden = completed === 0;
+}
+
+// Switching the door scenario: flip tab active-states, rebuild only the
+// decision card (its aria-live announces the new priorities).
+export function updateBeginnerScenario(): void {
+  const selected = BEGINNER_DOOR_SCENARIOS.find((scenario) => scenario.id === state.beginnerScenario)
+    || BEGINNER_DOOR_SCENARIOS[0];
+  setActive(document.querySelectorAll('[data-beginner-scenario]'), (el) => el.dataset.beginnerScenario === selected.id);
+  swapRegion(document.querySelector('.door-decision'), doorDecisionInner(selected));
 }

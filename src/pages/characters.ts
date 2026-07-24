@@ -1,4 +1,5 @@
 import { state } from '../app/state';
+import { setActive, swapRegion } from '../app/dom';
 import {
   RELATIONSHIP_LAYOUT,
   characterPortrait,
@@ -11,23 +12,33 @@ import {
   RELATIONSHIP_TYPES,
 } from '../data/characters';
 
+type Character = (typeof CHARACTERS)[number];
 type CharacterRelationship = (typeof CHARACTER_RELATIONSHIPS)[number];
 
-export function renderChars() {
-  const activeFilter = CHARACTER_FILTERS.some((filter) => filter.id === state.characterFilter)
-    ? state.characterFilter : 'all';
-  const visibleCharacters = CHARACTERS.filter((character) => activeFilter === 'all' || character.groups.includes(activeFilter));
-  const relationIcon = 'M8 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6 M16 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6 M4 22v-2a4 4 0 0 1 4-4 M20 22v-2a4 4 0 0 0-4-4 M8 12h8';
-  const locationIcon = 'M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0z M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6';
-  const giftIcon = 'M20 12v10H4V12 M2 7h20v5H2z M12 7v15 M12 7H7.5A2.5 2.5 0 1 1 12 4.5z M12 7h4.5A2.5 2.5 0 1 0 12 4.5z';
-  const filters = CHARACTER_FILTERS.map((filter) => `
-    <button class="character-filter${filter.id === activeFilter ? ' is-active' : ''}" data-character-filter="${filter.id}" aria-pressed="${filter.id === activeFilter}">
-      <span>${filter.label}</span>
-    </button>`).join('');
+const RELATION_ICON = 'M8 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6 M16 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6 M4 22v-2a4 4 0 0 1 4-4 M20 22v-2a4 4 0 0 0-4-4 M8 12h8';
+const LOCATION_ICON = 'M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0z M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6';
+const GIFT_ICON = 'M20 12v10H4V12 M2 7h20v5H2z M12 7v15 M12 7H7.5A2.5 2.5 0 1 1 12 4.5z M12 7h4.5A2.5 2.5 0 1 0 12 4.5z';
 
-  const cards = visibleCharacters.map((character) => {
-    const isExpanded = state.expandAllCharacters || state.expandedCharacter === character.id;
-    return `<article class="character-dossier${isExpanded ? ' is-expanded' : ''}" id="character-${character.id}">
+function activeCharacterFilter(): string {
+  return CHARACTER_FILTERS.some((filter) => filter.id === state.characterFilter)
+    ? state.characterFilter : 'all';
+}
+
+function visibleCharacters(): Character[] {
+  const activeFilter = activeCharacterFilter();
+  return CHARACTERS.filter((character) => activeFilter === 'all' || character.groups.includes(activeFilter));
+}
+
+function isCharacterExpanded(character: Character): boolean {
+  return state.expandAllCharacters || state.expandedCharacter === character.id;
+}
+
+// One dossier card. The detail wrapper is always present (no `hidden`) so the
+// open/close can animate as a CSS grid-rows accordion; `.is-expanded` + the
+// aria state carry the actual open/closed meaning.
+function characterCard(character: Character): string {
+  const expanded = isCharacterExpanded(character);
+  return `<article class="character-dossier${expanded ? ' is-expanded' : ''}" id="character-${character.id}">
       <div class="character-dossier__head">
         <div class="character-dossier__portrait">${characterPortrait(character, 'character-dossier__img')}</div>
         <div class="character-dossier__identity">
@@ -38,29 +49,40 @@ export function renderChars() {
           <div class="character-dossier__latin">${character.latin}</div>
           <div class="character-dossier__meta"><span>${character.faction}</span><i aria-hidden="true"></i><span>${character.role}</span></div>
         </div>
-        <button class="character-dossier__toggle" data-character-toggle="${character.id}" aria-expanded="${isExpanded}" aria-controls="character-detail-${character.id}" aria-label="${isExpanded ? 'ย่อ' : 'เปิด'}รายละเอียด ${character.name}">
+        <button class="character-dossier__toggle" data-character-toggle="${character.id}" aria-expanded="${expanded}" aria-controls="character-detail-${character.id}" aria-label="${expanded ? 'ย่อ' : 'เปิด'}รายละเอียด ${character.name}">
           ${icon('M6 9l6 6 6-6', 18, { width: 1.8 })}
         </button>
       </div>
-      <div class="character-dossier__detail" id="character-detail-${character.id}" ${isExpanded ? '' : 'hidden'}>
-        <p class="character-dossier__story">${character.detail}</p>
-        <div class="character-facts">
-          <div class="character-fact">
-            <span class="character-fact__icon character-fact__icon--relation">${icon(relationIcon, 18, { width: 1.6 })}</span>
-            <div><b>ความสัมพันธ์</b><p>${character.relationships}</p></div>
-          </div>
-          <div class="character-fact">
-            <span class="character-fact__icon character-fact__icon--location">${icon(locationIcon, 18, { width: 1.6 })}</span>
-            <div><b>พบที่</b><p>${character.encounter}</p></div>
-          </div>
-          <div class="character-fact">
-            <span class="character-fact__icon character-fact__icon--gift">${icon(giftIcon, 18, { width: 1.6 })}</span>
-            <div><b>สิ่งที่ปลดล็อก / มอบให้</b><p>${character.unlock}</p></div>
+      <div class="character-dossier__detail" id="character-detail-${character.id}" aria-hidden="${!expanded}">
+        <div class="character-dossier__detail-inner">
+          <p class="character-dossier__story">${character.detail}</p>
+          <div class="character-facts">
+            <div class="character-fact">
+              <span class="character-fact__icon character-fact__icon--relation">${icon(RELATION_ICON, 18, { width: 1.6 })}</span>
+              <div><b>ความสัมพันธ์</b><p>${character.relationships}</p></div>
+            </div>
+            <div class="character-fact">
+              <span class="character-fact__icon character-fact__icon--location">${icon(LOCATION_ICON, 18, { width: 1.6 })}</span>
+              <div><b>พบที่</b><p>${character.encounter}</p></div>
+            </div>
+            <div class="character-fact">
+              <span class="character-fact__icon character-fact__icon--gift">${icon(GIFT_ICON, 18, { width: 1.6 })}</span>
+              <div><b>สิ่งที่ปลดล็อก / มอบให้</b><p>${character.unlock}</p></div>
+            </div>
           </div>
         </div>
       </div>
     </article>`;
-  }).join('');
+}
+
+export function renderChars() {
+  const filters = CHARACTER_FILTERS.map((filter) => `
+    <button class="character-filter${filter.id === activeCharacterFilter() ? ' is-active' : ''}" data-character-filter="${filter.id}" aria-pressed="${filter.id === activeCharacterFilter()}">
+      <span>${filter.label}</span>
+    </button>`).join('');
+
+  const visible = visibleCharacters();
+  const cards = visible.map(characterCard).join('');
 
   return `<div class="screen" data-screen-label="ตัวละคร">
     <div class="eyebrow">CHARACTER ARCHIVE</div>
@@ -70,7 +92,7 @@ export function renderChars() {
     <div class="character-toolbar" aria-label="ตัวกรองตัวละคร">
       <div class="character-filters">${filters}</div>
       <div class="character-toolbar__meta">
-        <span>พบ ${visibleCharacters.length} ตัวละคร</span>
+        <span data-character-count>พบ ${visible.length} ตัวละคร</span>
         <button class="character-expand-all" data-character-expand-all aria-pressed="${state.expandAllCharacters}">
           ${state.expandAllCharacters ? 'ย่อทั้งหมด' : 'เปิดรายละเอียดทั้งหมด'}
         </button>
@@ -89,16 +111,89 @@ export function renderChars() {
   </div>`;
 }
 
+function syncExpandAllButton(): void {
+  const expandAll = document.querySelector('[data-character-expand-all]');
+  if (!expandAll) return;
+  expandAll.setAttribute('aria-pressed', String(state.expandAllCharacters));
+  expandAll.textContent = state.expandAllCharacters ? 'ย่อทั้งหมด' : 'เปิดรายละเอียดทั้งหมด';
+}
+
+// Changing the filter: flip filter active-states, patch the count, and rebuild
+// only the card grid.
+export function updateCharacterFilter(): void {
+  const activeFilter = activeCharacterFilter();
+  setActive(document.querySelectorAll('[data-character-filter]'), (el) => el.dataset.characterFilter === activeFilter);
+  const visible = visibleCharacters();
+  swapRegion(document.querySelector('.character-dossier-grid'), visible.map(characterCard).join(''));
+  const count = document.querySelector('[data-character-count]');
+  if (count) count.textContent = `พบ ${visible.length} ตัวละคร`;
+  syncExpandAllButton();
+}
+
+// Expand/collapse: re-sync every card's open state from `state` (a single toggle
+// can also collapse a previously-open card), no innerHTML rebuild so the CSS
+// accordion animates and scroll position is preserved.
+export function updateCharacterExpansion(): void {
+  document.querySelectorAll<HTMLElement>('.character-dossier').forEach((card) => {
+    const id = card.id.replace('character-', '');
+    const character = CHARACTERS.find((item) => item.id === id);
+    const expanded = character ? isCharacterExpanded(character) : false;
+    card.classList.toggle('is-expanded', expanded);
+    const toggle = card.querySelector('[data-character-toggle]');
+    toggle?.setAttribute('aria-expanded', String(expanded));
+    if (character) {
+      toggle?.setAttribute('aria-label', `${expanded ? 'ย่อ' : 'เปิด'}รายละเอียด ${character.name}`);
+    }
+    card.querySelector('.character-dossier__detail')?.setAttribute('aria-hidden', String(!expanded));
+  });
+
+  syncExpandAllButton();
+}
+
+// ---- Relationship map ----------------------------------------------------
+
 function relationIsVisible(relation: CharacterRelationship) {
   const modeTypes = state.relationshipMode === 'kinship' ? ['blood', 'foster'] : null;
   if (modeTypes && !modeTypes.includes(relation.type)) return false;
   return state.relationshipFilter === 'all' || state.relationshipFilter === relation.type;
 }
 
-export function renderRelations() {
-  const selected = CHARACTERS.find((character) => character.id === state.relationshipFocus) || CHARACTERS[0];
-  const activeRelations = CHARACTER_RELATIONSHIPS.filter((relation) => relation.from === selected.id || relation.to === selected.id);
+function focusedCharacter(): Character {
+  return CHARACTERS.find((character) => character.id === state.relationshipFocus) || CHARACTERS[0];
+}
+
+function relationsTouching(selected: Character): CharacterRelationship[] {
+  return CHARACTER_RELATIONSHIPS.filter((relation) => relation.from === selected.id || relation.to === selected.id);
+}
+
+// Inner markup of the right-hand inspector, rebuilt when the focused node changes.
+function relationshipInspectorInner(selected: Character, activeRelations: CharacterRelationship[]): string {
   const typeById = Object.fromEntries(RELATIONSHIP_TYPES.map((type) => [type.id, type.label]));
+  const directRows = activeRelations.map((relation) => {
+    const otherId = relation.from === selected.id ? relation.to : relation.from;
+    const other = CHARACTERS.find((character) => character.id === otherId);
+    if (!other) return '';
+    return `<button class="direct-relation relation-${relation.type}" data-relation-node="${other.id}">
+      <span class="direct-relation__portrait">${characterPortrait(other, 'direct-relation__img')}</span>
+      <span class="direct-relation__copy"><b>${other.name}</b><small>${relation.label}</small></span>
+      <span class="direct-relation__type">${typeById[relation.type]}</span>
+    </button>`;
+  }).join('');
+
+  return `
+        <div class="relationship-inspector__hero">
+          <div class="relationship-inspector__portrait">${characterPortrait(selected, 'relationship-inspector__img')}</div>
+          <div><h2>${selected.name}</h2><span>${selected.thai}</span><small>${selected.latin}</small></div>
+        </div>
+        <p>${selected.role}</p>
+        <div class="relationship-inspector__title">ความสัมพันธ์โดยตรง · ${activeRelations.length}</div>
+        <div class="direct-relation-list">${directRows || '<p class="relationship-empty">ยังไม่มีเส้นความสัมพันธ์ในผังนี้</p>'}</div>
+        <button class="relationship-detail-link" data-character-link="${selected.id}">ดูรายละเอียดตัวละคร &#8594;</button>`;
+}
+
+export function renderRelations() {
+  const selected = focusedCharacter();
+  const activeRelations = relationsTouching(selected);
   const modeButtons = [
     { id: 'overview', label: 'ภาพรวม' },
     { id: 'kinship', label: 'เครือญาติ' },
@@ -115,17 +210,6 @@ export function renderRelations() {
     return `<button class="relationship-node${isFocused ? ' is-focused' : ''}${isConnected ? ' is-connected' : ''}" style="--node-x:${position[0]}px;--node-y:${position[1]}px" data-relation-node="${character.id}" aria-pressed="${isFocused}">
       <span class="relationship-node__portrait">${characterPortrait(character, 'relationship-node__img')}</span>
       <span class="relationship-node__copy"><b>${character.name}</b><small>${character.thai}</small></span>
-    </button>`;
-  }).join('');
-
-  const directRows = activeRelations.map((relation) => {
-    const otherId = relation.from === selected.id ? relation.to : relation.from;
-    const other = CHARACTERS.find((character) => character.id === otherId);
-    if (!other) return '';
-    return `<button class="direct-relation relation-${relation.type}" data-relation-node="${other.id}">
-      <span class="direct-relation__portrait">${characterPortrait(other, 'direct-relation__img')}</span>
-      <span class="direct-relation__copy"><b>${other.name}</b><small>${relation.label}</small></span>
-      <span class="direct-relation__type">${typeById[relation.type]}</span>
     </button>`;
   }).join('');
 
@@ -165,23 +249,43 @@ export function renderRelations() {
         </div>
       </div>
 
-      <aside class="relationship-inspector">
-        <div class="relationship-inspector__hero">
-          <div class="relationship-inspector__portrait">${characterPortrait(selected, 'relationship-inspector__img')}</div>
-          <div><h2>${selected.name}</h2><span>${selected.thai}</span><small>${selected.latin}</small></div>
-        </div>
-        <p>${selected.role}</p>
-        <div class="relationship-inspector__title">ความสัมพันธ์โดยตรง · ${activeRelations.length}</div>
-        <div class="direct-relation-list">${directRows || '<p class="relationship-empty">ยังไม่มีเส้นความสัมพันธ์ในผังนี้</p>'}</div>
-        <button class="relationship-detail-link" data-character-link="${selected.id}">ดูรายละเอียดตัวละคร &#8594;</button>
-      </aside>
+      <aside class="relationship-inspector">${relationshipInspectorInner(selected, activeRelations)}</aside>
     </div>
 
     <div class="relationship-mobile-map">${mobileGroups}</div>
   </div>`;
 }
 
-export function drawRelationshipLines() {
+// Any relationship interaction (focus a node, switch mode, filter a type):
+// re-sync control states + node highlights + inspector from `state`, then
+// redraw the connecting lines. Never rebuilds the 33-node canvas.
+export function updateRelationshipView(): void {
+  const selected = focusedCharacter();
+  const activeRelations = relationsTouching(selected);
+
+  setActive(document.querySelectorAll('[data-relationship-mode]'), (el) => el.dataset.relationshipMode === state.relationshipMode);
+  setActive(document.querySelectorAll('[data-relationship-filter]'), (el) => el.dataset.relationshipFilter === state.relationshipFilter);
+
+  document.querySelectorAll<HTMLElement>('.relationship-node').forEach((node) => {
+    const id = node.dataset.relationNode;
+    const isFocused = id === selected.id;
+    const isConnected = isFocused || activeRelations.some((relation) => relation.from === id || relation.to === id);
+    node.classList.toggle('is-focused', isFocused);
+    node.classList.toggle('is-connected', isConnected);
+    node.setAttribute('aria-pressed', String(isFocused));
+  });
+
+  document.querySelectorAll<HTMLElement>('.relationship-mobile-node').forEach((node) => {
+    node.classList.toggle('is-focused', node.dataset.relationNode === selected.id);
+  });
+
+  const inspector = document.querySelector('.relationship-inspector');
+  if (inspector) swapRegion(inspector, relationshipInspectorInner(selected, activeRelations));
+
+  drawRelationshipLines();
+}
+
+export function drawRelationshipLines(animateReveal = true) {
   const canvas = document.querySelector('.relationship-canvas');
   const svg = document.getElementById('relationship-lines');
   if (!canvas || !svg) return;
@@ -218,4 +322,12 @@ export function drawRelationshipLines() {
   }).join('');
   svg.setAttribute('viewBox', `0 0 ${canvas.clientWidth} ${canvas.clientHeight}`);
   svg.innerHTML = paths;
+
+  // Fade the layer in on a deliberate redraw (focus/filter change), but not on
+  // resize where it would flicker on every tick.
+  if (animateReveal) {
+    svg.classList.remove('is-drawing');
+    void svg.getBoundingClientRect(); // reflow so the animation restarts
+    svg.classList.add('is-drawing');
+  }
 }

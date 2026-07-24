@@ -8,13 +8,23 @@ import {
   renderCore,
   renderMindset,
   renderOverview,
+  updateBeginnerChecklist,
+  updateBeginnerScenario,
 } from './pages/basics';
 import {
   drawRelationshipLines,
   renderChars,
   renderRelations,
+  updateCharacterExpansion,
+  updateCharacterFilter,
+  updateRelationshipView,
 } from './pages/characters';
-import { renderBoons, renderWeapons } from './pages/arsenal';
+import {
+  renderBoons,
+  renderWeapons,
+  updateGodSelection,
+  updateWeaponSelection,
+} from './pages/arsenal';
 import {
   renderBiomes,
   renderKeepsakes,
@@ -82,7 +92,7 @@ function focusSelector(element: Element | null): string | null {
 function doRender(): void {
   renderNav();
   getContentMount().innerHTML = RENDERERS[state.section]();
-  if (state.section === 'relations') window.setTimeout(drawRelationshipLines, 0);
+  if (state.section === 'relations') window.setTimeout(() => drawRelationshipLines(), 0);
 }
 
 function render(afterRender?: () => void): void {
@@ -162,7 +172,7 @@ document.addEventListener('click', (event) => {
     if (!visible.some((character) => character.id === state.expandedCharacter)) {
       state.expandedCharacter = visible[0]?.id ?? 'zagreus';
     }
-    render();
+    updateCharacterFilter();
     return;
   }
 
@@ -171,24 +181,23 @@ document.addEventListener('click', (event) => {
     const id = characterToggle.dataset.characterToggle;
     state.expandAllCharacters = false;
     state.expandedCharacter = state.expandedCharacter === id ? null : id;
-    render(() => {
-      requestAnimationFrame(() => {
-        document.getElementById(`character-${id}`)?.scrollIntoView({ block: 'nearest' });
-      });
+    updateCharacterExpansion();
+    requestAnimationFrame(() => {
+      document.getElementById(`character-${id}`)?.scrollIntoView({ block: 'nearest' });
     });
     return;
   }
 
   if (closest(event.target, '[data-character-expand-all]')) {
     state.expandAllCharacters = !state.expandAllCharacters;
-    render();
+    updateCharacterExpansion();
     return;
   }
 
   const relationshipNode = closest(event.target, '[data-relation-node]');
   if (relationshipNode?.dataset.relationNode) {
     state.relationshipFocus = relationshipNode.dataset.relationNode;
-    render();
+    updateRelationshipView();
     return;
   }
 
@@ -197,7 +206,7 @@ document.addEventListener('click', (event) => {
   if (relationshipModeId === 'overview' || relationshipModeId === 'kinship') {
     state.relationshipMode = relationshipModeId;
     state.relationshipFilter = 'all';
-    render();
+    updateRelationshipView();
     return;
   }
 
@@ -210,28 +219,28 @@ document.addEventListener('click', (event) => {
     ) {
       state.relationshipMode = 'overview';
     }
-    render();
+    updateRelationshipView();
     return;
   }
 
   const weapon = closest(event.target, '[data-weapon]');
   if (weapon?.dataset.weapon) {
     state.weapon = weapon.dataset.weapon;
-    render();
+    updateWeaponSelection();
     return;
   }
 
   const god = closest(event.target, '[data-god]');
   if (god?.dataset.god) {
     state.god = god.dataset.god;
-    render();
+    updateGodSelection();
     return;
   }
 
   const beginnerScenario = closest(event.target, '[data-beginner-scenario]');
   if (beginnerScenario?.dataset.beginnerScenario) {
     state.beginnerScenario = beginnerScenario.dataset.beginnerScenario;
-    render();
+    updateBeginnerScenario();
     return;
   }
 
@@ -241,18 +250,18 @@ document.addEventListener('click', (event) => {
     state.beginnerChecklist = state.beginnerChecklist.includes(id)
       ? state.beginnerChecklist.filter((item) => item !== id)
       : [...state.beginnerChecklist, id];
-    render();
+    updateBeginnerChecklist();
     return;
   }
 
   if (closest(event.target, '[data-beginner-reset]')) {
     state.beginnerChecklist = [];
-    render();
+    updateBeginnerChecklist();
   }
 });
 
 window.addEventListener('resize', () => {
-  if (state.section === 'relations') window.setTimeout(drawRelationshipLines, 0);
+  if (state.section === 'relations') window.setTimeout(() => drawRelationshipLines(false), 0);
 });
 
 // Browser back/forward navigate between sections (each is pushed in goToSection).

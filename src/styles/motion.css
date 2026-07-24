@@ -1,0 +1,77 @@
+/* =========================================================================
+   Motion layer — shared animations, press feedback and View Transition wiring.
+   Durations/easings come from tokens.css; reduced-motion is neutralised
+   globally in responsive.css, so nothing here needs its own opt-out.
+   ========================================================================= */
+
+/* ---- Region swap ------------------------------------------------------
+   A targeted in-page update (weapon/god/scenario swap, filtered grid) replaced
+   a region's contents. Replay a small settle so the change reads as deliberate
+   rather than a flash. Applied from swapRegion() in app/dom.ts. */
+@keyframes regionIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.region-enter { animation: regionIn var(--dur-base) var(--ease-out) both; }
+
+/* ---- Press feedback ---------------------------------------------------
+   A quick scale-down while a control is held. Where the control already
+   transitions transform (chips, filters, nodes) the release eases back;
+   elsewhere it snaps, which still reads as a press. */
+.wchip:active,
+.gchip:active,
+.nav-item:active,
+.link-card:active,
+.character-filter:active,
+.character-expand-all:active,
+.character-dossier__toggle:active,
+.scenario-tab:active,
+.preflight-item:active,
+.preflight__reset:active,
+.relationship-mode:active,
+.relationship-legend__item:active,
+.relationship-node:active,
+.direct-relation:active,
+.relationship-detail-link:active,
+.btn-teal:active {
+  transform: scale(.97);
+}
+/* Preserve the lift on controls whose resting/hover state is a translate. */
+.wchip:active { transform: translateY(-1px) scale(.97); }
+.relationship-node:active { transform: scale(1.02); }
+.relationship-node.is-focused:active { transform: scale(1.03); }
+
+/* ---- View Transitions -------------------------------------------------
+   Reserved for whole-section navigation (main.ts wraps only section changes).
+   Name the screen root so the incoming section slides up, and the active nav
+   bar so the indicator glides between items instead of a plain crossfade.
+   Guarded by no-preference so reduced-motion keeps the instant swap. */
+@media (prefers-reduced-motion: no-preference) {
+  .screen { view-transition-name: screen; }
+  .nav-item__bar { view-transition-name: nav-bar; }
+
+  ::view-transition-group(screen) { animation-duration: var(--dur-slow); }
+  ::view-transition-old(screen) {
+    animation: vtFadeOut var(--dur-base) var(--ease-out) both;
+  }
+  ::view-transition-new(screen) {
+    animation: vtScreenIn var(--dur-slow) var(--ease-out) both;
+  }
+  ::view-transition-group(nav-bar) {
+    animation-duration: var(--dur-base);
+    animation-timing-function: var(--ease-out);
+  }
+}
+
+@keyframes vtFadeOut { to { opacity: 0; } }
+@keyframes vtScreenIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Relationship lines reveal ---------------------------------------
+   The whole lines layer fades in when it is (re)drawn on a focus/filter
+   change, without touching each path's opacity (which encodes focus state)
+   or dash pattern. Toggled from drawRelationshipLines(). */
+@keyframes linesReveal { from { opacity: 0; } to { opacity: 1; } }
+.relationship-lines.is-drawing { animation: linesReveal var(--dur-base) var(--ease-out); }

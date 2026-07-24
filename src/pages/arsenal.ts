@@ -1,4 +1,5 @@
 import { state } from '../app/state';
+import { setActive, swapRegion } from '../app/dom';
 import {
   BOON_STARTERS,
   GOD_IMAGES,
@@ -21,8 +22,21 @@ import {
   WEAPONS,
 } from '../data/arsenal';
 
-export function renderWeapons() {
-  const chips = WEAPONS.map((w) => `
+type Weapon = (typeof WEAPONS)[number];
+type God = (typeof GODS)[number];
+
+function currentWeapon(): Weapon {
+  return WEAPONS.find((x) => x.id === state.weapon) || WEAPONS[0];
+}
+
+function currentGod(): God {
+  return GODS.find((x) => x.id === state.god) || GODS[0];
+}
+
+// ---- Weapons -------------------------------------------------------------
+
+function weaponChips(): string {
+  return WEAPONS.map((w) => `
     <button class="wchip${w.id === state.weapon ? ' is-active' : ''}" data-weapon="${w.id}">
       <span class="wchip__art">
         <span class="asset-fallback" aria-hidden="true">${icon(w.iconPath, 26, { width: 1.6 })}</span>
@@ -31,9 +45,11 @@ export function renderWeapons() {
       <span class="wchip__short">${w.short}</span>
       <span class="wchip__type">${w.type}</span>
     </button>`).join('');
+}
 
-  const w = WEAPONS.find((x) => x.id === state.weapon) || WEAPONS[0];
-
+// Everything below the selector that depends on the chosen weapon. Rebuilt on
+// its own so picking a weapon never disturbs the intro, media or chip row.
+function weaponDetail(w: Weapon): string {
   const tips = w.tips.map((t) => `<li>${MARK}<span>${t}</span></li>`).join('');
 
   const aspects = w.aspects.map((a) => `
@@ -56,14 +72,7 @@ export function renderWeapons() {
       <div class="build__why">${MARK}<span><b>ทำไมสนุก:&nbsp;</b>${b.why}</span></div>
     </div>`).join('');
 
-  return `<div class="screen" data-screen-label="อาวุธ">
-    <div class="eyebrow">INFERNAL ARMS</div>
-    <h1 class="section-title">อาวุธทั้ง 6 แบบเจาะลึก</h1>
-    <p class="lead" style="margin-bottom:26px">แต่ละอาวุธเปลี่ยนสไตล์การเล่นไปคนละแบบ ลองให้ครบทั้ง 6 (ชนะด้วยแต่ละอันจะได้ Darkness/Titan Blood โบนัส) แล้วค่อยหาอันที่ถูกใจ — กดเลือกด้านล่างเพื่อดูรายละเอียด</p>
-
-    ${mediaFigure('assets/official/weapon-combat.jpg', 'Zagreus ต่อสู้ด้วยอาวุธ Infernal Arms', 'Infernal Arms · อาวุธแต่ละชิ้นเปลี่ยนจังหวะการเล่น', 'media-frame--wide')}
-    <div class="grid auto-150 gap-10" style="margin-bottom:28px">${chips}</div>
-
+  return `
     <div class="card card--edge wpanel" style="margin-bottom:22px">
       <div class="wpanel__head">
         <div class="wpanel__badge">
@@ -101,12 +110,45 @@ export function renderWeapons() {
 
     <div class="subhead subhead--tight subhead--spaced">3 บิลด์สนุก ๆ ที่ชุมชนแนะนำ</div>
     <p class="subnote">ไกด์คร่าว ๆ ว่าเล็ง Aspect ไหน + เก็บ boon เทพองค์ไหน — ไม่ต้องได้เป๊ะ ปรับตาม boon ที่เจอจริงในรันได้เสมอ</p>
-    <div class="stack">${builds}</div>
+    <div class="stack">${builds}</div>`;
+}
+
+export function renderWeapons() {
+  return `<div class="screen" data-screen-label="อาวุธ">
+    <div class="eyebrow">INFERNAL ARMS</div>
+    <h1 class="section-title">อาวุธทั้ง 6 แบบเจาะลึก</h1>
+    <p class="lead" style="margin-bottom:26px">แต่ละอาวุธเปลี่ยนสไตล์การเล่นไปคนละแบบ ลองให้ครบทั้ง 6 (ชนะด้วยแต่ละอันจะได้ Darkness/Titan Blood โบนัส) แล้วค่อยหาอันที่ถูกใจ — กดเลือกด้านล่างเพื่อดูรายละเอียด</p>
+
+    ${mediaFigure('assets/official/weapon-combat.jpg', 'Zagreus ต่อสู้ด้วยอาวุธ Infernal Arms', 'Infernal Arms · อาวุธแต่ละชิ้นเปลี่ยนจังหวะการเล่น', 'media-frame--wide')}
+    <div class="grid auto-150 gap-10" id="weapon-chips" style="margin-bottom:28px">${weaponChips()}</div>
+
+    <div id="weapon-detail">${weaponDetail(currentWeapon())}</div>
   </div>`;
 }
 
-export function renderBoons() {
-  const g = GODS.find((x) => x.id === state.god) || GODS[0];
+// Picking a weapon: flip the chip active-states in place (focus stays on the
+// clicked chip) and rebuild only the detail region.
+export function updateWeaponSelection(): void {
+  setActive(document.querySelectorAll('[data-weapon]'), (el) => el.dataset.weapon === state.weapon, false);
+  swapRegion(document.getElementById('weapon-detail'), weaponDetail(currentWeapon()));
+}
+
+// ---- Boons ---------------------------------------------------------------
+
+function godChips(): string {
+  return GODS.map((g) => `
+    <button type="button" class="gchip${g.id === state.god ? ' is-active' : ''}" data-god="${g.id}" aria-pressed="${g.id === state.god}" style="--accent:${g.color}">
+      <span class="gchip__symbol">
+        <span class="gchip__dot asset-fallback"></span>
+        ${gameAsset(GOD_IMAGES[g.id].symbol, `สัญลักษณ์ ${g.name}`, 'gchip__img')}
+      </span>
+      <span>${g.name}</span>
+    </button>`).join('');
+}
+
+// The selected-god panel + example boons. Kept separate from the selector so a
+// click rebuilds only this region while its own entrance keyframes replay.
+function godDetail(g: God): string {
   const selectedGodImages = GOD_IMAGES[g.id];
   const portraitLayout = GOD_PORTRAIT_LAYOUT[g.id] || GOD_PORTRAIT_LAYOUT.zeus;
   const portraitStyle = [
@@ -119,14 +161,6 @@ export function renderBoons() {
     `--portrait-mobile-x:${portraitLayout.mobileX}`,
     `--portrait-mobile-y:${portraitLayout.mobileY}`,
   ].join(';');
-  const gChips = GODS.map((g) => `
-    <button type="button" class="gchip${g.id === state.god ? ' is-active' : ''}" data-god="${g.id}" aria-pressed="${g.id === state.god}" style="--accent:${g.color}">
-      <span class="gchip__symbol">
-        <span class="gchip__dot asset-fallback"></span>
-        ${gameAsset(GOD_IMAGES[g.id].symbol, `สัญลักษณ์ ${g.name}`, 'gchip__img')}
-      </span>
-      <span>${g.name}</span>
-    </button>`).join('');
 
   const signature = g.signature.map((s) => `<li><span class="sig-dot"></span><span>${s}</span></li>`).join('');
   const boonExamples = (BOON_STARTERS[g.id] || []).map(([name, slot, file]) => `
@@ -138,6 +172,37 @@ export function renderBoons() {
       <span class="boon-token__copy"><small>${slot}</small><b>${name}</b></span>
     </div>`).join('');
 
+  return `
+      <section class="god-encounter god-encounter--${g.id}" data-selected-god="${g.id}" style="${portraitStyle}" aria-labelledby="god-name-${g.id}">
+        <div class="god-encounter__art">
+          <span class="asset-fallback" aria-hidden="true">${g.name[0]}</span>
+          ${gameAsset(selectedGodImages.portrait, `ภาพ ${g.name}`, 'god-encounter__portrait')}
+        </div>
+        <div class="god-encounter__content">
+          <header class="god-encounter__head">
+            <span class="god-encounter__symbol">
+              ${gameAsset(selectedGodImages.symbol, `สัญลักษณ์ ${g.name}`, 'god-encounter__symbol-img')}
+            </span>
+            <h2 class="god-encounter__name" id="god-name-${g.id}">${g.name}</h2>
+            ${state.showLatin ? `<span class="god-encounter__latin">${g.latin}</span>` : ''}
+          </header>
+          <div class="tag-row">
+            <span class="tag tag--type">สาย: ${g.domain}</span>
+            <span class="tag tag--status" style="background:${g.statusBg};color:${g.color}">${g.status}</span>
+          </div>
+          <div class="field-label">จุดเด่น</div>
+          <ul class="sig-list">${signature}</ul>
+          <div class="god-encounter__synergy"><b>การจับคู่ &amp; ทิป: </b><span>${g.synergy}</span></div>
+        </div>
+      </section>
+
+      <section class="god-boon-shelf" style="--accent:${g.color}" aria-labelledby="god-boons-title-${g.id}">
+        <h3 class="god-boon-shelf__title" id="god-boons-title-${g.id}">ตัวอย่างพรหลักของ ${g.name}</h3>
+        <div class="boon-token-grid">${boonExamples}</div>
+      </section>`;
+}
+
+export function renderBoons() {
   const statuses = STATUSES.map((st) => `
     <div class="card card--edge status-card" style="--accent:${st.color}">
       <div class="status-card__head">
@@ -190,35 +255,8 @@ export function renderBoons() {
     </div>
 
     <div class="god-workspace">
-      <div class="god-selector" aria-label="เลือกเทพเพื่อดูรายละเอียด">${gChips}</div>
-
-      <section class="god-encounter god-encounter--${g.id}" data-selected-god="${g.id}" style="${portraitStyle}" aria-labelledby="god-name-${g.id}">
-        <div class="god-encounter__art">
-          <span class="asset-fallback" aria-hidden="true">${g.name[0]}</span>
-          ${gameAsset(selectedGodImages.portrait, `ภาพ ${g.name}`, 'god-encounter__portrait')}
-        </div>
-        <div class="god-encounter__content">
-          <header class="god-encounter__head">
-            <span class="god-encounter__symbol">
-              ${gameAsset(selectedGodImages.symbol, `สัญลักษณ์ ${g.name}`, 'god-encounter__symbol-img')}
-            </span>
-            <h2 class="god-encounter__name" id="god-name-${g.id}">${g.name}</h2>
-            ${state.showLatin ? `<span class="god-encounter__latin">${g.latin}</span>` : ''}
-          </header>
-          <div class="tag-row">
-            <span class="tag tag--type">สาย: ${g.domain}</span>
-            <span class="tag tag--status" style="background:${g.statusBg};color:${g.color}">${g.status}</span>
-          </div>
-          <div class="field-label">จุดเด่น</div>
-          <ul class="sig-list">${signature}</ul>
-          <div class="god-encounter__synergy"><b>การจับคู่ &amp; ทิป: </b><span>${g.synergy}</span></div>
-        </div>
-      </section>
-
-      <section class="god-boon-shelf" style="--accent:${g.color}" aria-labelledby="god-boons-title-${g.id}">
-        <h3 class="god-boon-shelf__title" id="god-boons-title-${g.id}">ตัวอย่างพรหลักของ ${g.name}</h3>
-        <div class="boon-token-grid">${boonExamples}</div>
-      </section>
+      <div class="god-selector" id="god-selector" aria-label="เลือกเทพเพื่อดูรายละเอียด">${godChips()}</div>
+      <div id="god-detail">${godDetail(currentGod())}</div>
     </div>
 
     <div class="subhead subhead--tight">สถานะ (Status) ของแต่ละเทพ ทำงานยังไง</div>
@@ -240,4 +278,12 @@ export function renderBoons() {
       <p style="margin:0">ใส่ <b class="c-ink" style="color:#e7ddd0">Keepsake ของเทพองค์นั้น</b> ตอนเริ่มรัน จะการันตีให้เทพองค์นั้นโผล่มาให้เลือกก่อน + เรริตี้สูงขึ้น เป็นวิธีบังคับทิศทางบิลด์ที่ดีที่สุด</p>
     </div>
   </div>`;
+}
+
+// Picking a god: flip selector active-states in place, rebuild only the
+// selected-god panel. Its own godArtIn/godCopyIn keyframes carry the entrance,
+// so no extra region animation is applied here.
+export function updateGodSelection(): void {
+  setActive(document.querySelectorAll('[data-god]'), (el) => el.dataset.god === state.god);
+  swapRegion(document.getElementById('god-detail'), godDetail(currentGod()), false);
 }
